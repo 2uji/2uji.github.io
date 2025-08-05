@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>ゆぢ</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    background-color: #111;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    overflow: auto;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 20px;
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    cursor: pointer;
+  }
+  .glitch-effect {
+    animation: glitch 0.2s infinite;
+    filter: contrast(300%) saturate(0.3) hue-rotate(40deg);
+    background-color: black !important;
+    color: red !important;
+  }
+  body.glitch-effect #scaryImage {
+    animation: glitch 0.2s infinite;
+    filter: contrast(300%) saturate(0.3) hue-rotate(40deg);
+  }
+  @keyframes glitch {
+    0% { transform: translate(0,0); }
+    20% { transform: translate(-2px,2px); }
+    40% { transform: translate(2px,-2px); }
+    60% { transform: translate(-3px,1px); }
+    80% { transform: translate(3px,-1px); }
+    100% { transform: translate(0,0); }
+  }
+  #scaryImage {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    animation: showImage 1s forwards;
+  }
+  @keyframes showImage {
+    to { opacity: 1; }
+  }
+  #guestbook {
+    display: none;
+    max-width: 720px;
+    margin: 0 auto 50px auto;
+    background: #222;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    text-align: left;
+    color: #ddd;
+  }
+  #guestbook h2 {
+    margin-top: 0;
+    color: #fff;
+    text-align: center;
+  }
+  #guestbook form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  #guestbook input[type="text"],
+  #guestbook input[type="password"],
+  #guestbook textarea {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  #guestbook textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  #guestbook button {
+    align-self: flex-end;
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #guestbook button:hover {
+    background-color: #777;
+  }
+  #messages {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #111;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+.message-item {
+  position: relative;
+  padding: 8px 90px 8px 0;
+  border-bottom: 1px solid #444;
+  word-break: break-word;
+}
+.msg-buttons {
+  position: absolute;
+  top: 8px;
+  right: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  white-space: nowrap;
+}
+.msg-buttons button {
+  padding: 1px 6px;
+  min-width: 40px;
+  height: 20px;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: 3px;
+  cursor: pointer;
+  background: #444;
+  color: white;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+  }
+  .msg-buttons button:hover {
+    background: #666;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">ゆぢ</h1>
+    <iframe src="https://www.youtube.com/embed/p010N38zFrA?autoplay=1&mute=1&controls=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%; max-width:720px; height:405px; border:none; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.7); margin-bottom:40px;"></iframe>
+    <img src="https://github.com/2uji/2uji.github.io/blob/main/%EB%B4%87%EC%B9%98.png?raw=true" alt="image" id="toggleGuestbook" style="width:100%; max-width:600px; height:auto; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.6); cursor:pointer; margin-bottom:20px;">
+    <div id="guestbook">
+      <h2></h2>
+<form id="guestbookForm" style="
+  display: grid;
+  grid-template-columns: 150px 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  height: 80px;
+">
+
+  <input type="text" id="nameInput" placeholder="이름" style="grid-column: 1 / 2; grid-row: 1 / 2; height: 100%; border-radius: 6px; border: none; font-size: 1rem; font-family: inherit; padding: 0 10px;" />
+
+  <input type="password" id="passwordInput" placeholder="비밀번호" style="grid-column: 1 / 2; grid-row: 2 / 3; height: 100%; border-radius: 6px; border: none; font-size: 1rem; font-family: inherit; padding: 0 10px;" />
+
+<textarea id="messageInput" maxlength="280" placeholder="여긴 ㅇㅅㅇ하는 사람이 없어서 좋네" required
+  style="grid-column: 2 / 3; grid-row: 1 / 3; height: 100%; border-radius: 6px; border: none; font-size: 1rem; font-family: inherit; padding: 10px; resize: none; overflow: auto;">
+</textarea>
+
+  <button type="submit" style="grid-column: 3 / 4; grid-row: 1 / 3; height: 100%; background-color: #555; color: white; border: none; padding: 0 16px; font-size: 1rem; border-radius: 6px; cursor: pointer; transition: background-color 0.3s ease;">
+    우웅
+  </button>
+
+</form>
+
+
+      <div id="messages"></div>
+    </div>
+  </div>
+
+  <img id="scaryImage" src="https://github.com/2uji/2uji.github.io/blob/main/12%EC%8B%9C.jpg?raw=true" alt="horror" />
+  <audio id="glitchSound" src="https://raw.githubusercontent.com/2uji/2uji.github.io/main/%EC%95%84%EC%98%A4%EC%98%A4%EB%8B%88.mp3" preload="auto"></audio>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script>
+    const MASTER_PASSWORD = "132434";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYDJH-FNykmr7h7fvc8vfUcqefDuKUjrM",
+      authDomain: "guestbook-e274d.firebaseapp.com",
+      projectId: "guestbook-e274d",
+      storageBucket: "guestbook-e274d.firebasestorage.app",
+      messagingSenderId: "352269332150",
+      appId: "1:352269332150:web:c0daa16cea56622fc0c017"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const toggleBtn = document.getElementById('toggleGuestbook');
+    const guestbook = document.getElementById('guestbook');
+    const form = document.getElementById('guestbookForm');
+    const messagesDiv = document.getElementById('messages');
+    const nameInput = document.getElementById('nameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const messageInput = document.getElementById('messageInput');
+    const title = document.getElementById('title');
+    const body = document.body;
+    const scaryImage = document.getElementById('scaryImage');
+    const glitchSound = document.getElementById('glitchSound');
+    const container = document.querySelector('.container');
+
+    toggleBtn.addEventListener('click', () => {
+      guestbook.style.display = guestbook.style.display === 'block' ? 'none' : 'block';
+    });
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const name = nameInput.value.trim() || '익명';
+  const password = passwordInput.value.trim();
+  const msg = messageInput.value.trim();
+
+  if (!msg) return;
+
+  if (msg.length > 280) {
+    alert('메시지는 280자 이내로 작성해주세요.');
+    return;
+  }
+
+  db.collection('guestbook').add({
+    name: name,
+    password: password,
+    message: msg,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    form.reset();
+  });
+});
+
+function renderMessages(docs) {
+  messagesDiv.innerHTML = '';
+  docs.forEach(doc => {
+    const data = doc.data();
+    const timestamp = data.timestamp ? data.timestamp.toDate() : null;
+
+    function formatDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      const hh = String(date.getHours()).padStart(2, '0');
+      const mm = String(date.getMinutes()).padStart(2, '0');
+      return `${y}-${m}-${d} ${hh}:${mm}`;
+    }
+
+    const timeStr = timestamp ? formatDate(timestamp) : '시간 없음';
+
+    const div = document.createElement('div');
+    div.className = 'message-item';
+    div.dataset.id = doc.id;
+    div.dataset.password = data.password || '';
+    div.innerHTML = `<strong>${escapeHtml(data.name)}</strong> : ${escapeHtml(data.message)}<br><small style="color:#777;">${timeStr}</small>`;
+
+    const btnsDiv = document.createElement('div');
+    btnsDiv.className = 'msg-buttons';
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = '수정';
+    editBtn.addEventListener('click', () => handleEdit(doc.id, data));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '삭제';
+    deleteBtn.addEventListener('click', () => handleDelete(doc.id, data));
+
+    btnsDiv.appendChild(editBtn);
+    btnsDiv.appendChild(deleteBtn);
+    div.appendChild(btnsDiv);
+
+    messagesDiv.appendChild(div);
+  });
+}
+
+
+    db.collection('guestbook').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      renderMessages(snapshot.docs);
+    });
+
+    function handleDelete(id, data) {
+      const inputPwd = prompt('비밀번호를 입력하세요');
+      if (inputPwd === null) return;
+      if (inputPwd === MASTER_PASSWORD || inputPwd === data.password) {
+        db.collection('guestbook').doc(id).delete();
+      } else {
+        alert('비밀번호가 틀렸습니다');
+      }
+    }
+
+function handleEdit(id, data) {
+  const inputPwd = prompt('비밀번호를 입력하세요');
+  if (inputPwd === null) return;
+  if (inputPwd === MASTER_PASSWORD || inputPwd === data.password) {
+    const newMsg = prompt('메세지 수정', data.message);
+    if (newMsg === null || newMsg.trim() === '') return alert('메세지를 입력하세요');
+    db.collection('guestbook').doc(id).update({
+      message: newMsg.trim()
+    });
+  } else {
+    alert('비밀번호가 틀렸습니다');
+  }
+}
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"]|'/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    let clickCount = 0;
+    title.addEventListener('click', () => {
+      clickCount++;
+      if (clickCount === 12) {
+        glitchSound.play();
+        body.classList.add('glitch-effect');
+        body.style.overflow = 'hidden';
+        setTimeout(() => {
+          container.innerHTML = '';
+          scaryImage.style.display = 'block';
+          scaryImage.style.opacity = '1';
+          setTimeout(() => {
+            body.classList.remove('glitch-effect');
+            body.style.overflow = 'auto';
+          }, 5000);
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
