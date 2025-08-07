@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 Not Found</title>
+<style>
+body {
+    background-color: #fff;
+    color: #000;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transition: background-color 0.1s, color 0.1s, filter 0.1s;
+}
+h1 { font-size: 5em; margin: 0.2em; }
+p { margin: 0.2em; }
+#fakeIcon {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #ccc;
+    border-radius: 4px;
+    top: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #666;
+    user-select: none;
+}
+#glitchLayer {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:999;
+}
+.glitchChar {
+    position:absolute;
+    color: red;
+    font-size:1em;
+    font-family: monospace;
+    opacity:0.6;
+    user-select:none;
+}
+#iframeContainer {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    display: none;
+    z-index:1000;
+}
+#iframeContainer iframe {
+    width:100%;
+    height:100%;
+    border:none;
+}
+</style>
+</head>
+<body>
+<h1>404</h1>
+<p>Page Not Found</p>
+<div id="fakeIcon">⚠️</div>
+<div id="glitchLayer"></div>
+<div id="iframeContainer">
+    <iframe src="main.html"></iframe>
+</div>
+
+<script>
+let attempt = 0;
+const maxAttempts = 5;
+const icon = document.getElementById('fakeIcon');
+const layer = document.getElementById('glitchLayer');
+const iframeContainer = document.getElementById('iframeContainer');
+
+function randomPosition() {
+    const x = Math.random() * (window.innerWidth - icon.offsetWidth);
+    const y = Math.random() * (window.innerHeight - icon.offsetHeight);
+    icon.style.left = x + 'px';
+    icon.style.top = y + 'px';
+}
+
+function randomGlitchChar() {
+    const baseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const combining = ['\u0300','\u0301','\u0302','\u0303','\u0304','\u0305','\u0306','\u0307','\u0308','\u0309'];
+    let char = baseChars[Math.floor(Math.random()*baseChars.length)];
+    const count = Math.floor(Math.random()*5)+1;
+    for(let i=0;i<count;i++){
+        char += combining[Math.floor(Math.random()*combining.length)];
+    }
+    return char;
+}
+
+function addRedGlitch(count) {
+    for(let i=0;i<count;i++){
+        const char = document.createElement('div');
+        char.className = 'glitchChar';
+        char.textContent = randomGlitchChar();
+        char.style.left = Math.random()*100 + 'vw';
+        char.style.top = Math.random()*100 + 'vh';
+        char.style.fontSize = (10 + Math.random()*30) + 'px';
+        char.style.opacity = 0.4 + Math.random()*0.6;
+        layer.appendChild(char);
+        const dx = Math.random()*20-10;
+        const dy = Math.random()*20-10;
+        char.animate([
+            {transform:`translate(0,0)`},
+            {transform:`translate(${dx}px,${dy}px)`},
+            {transform:`translate(0,0)`}
+        ], {duration:300 + Math.random()*400, iterations:Infinity});
+    }
+}
+
+function colorDistortion(level) {
+    if(level < 3) return;
+    const invert = level >= 5 ? 1 : Math.random()*0.5;
+    const hue = Math.random()*360;
+    const saturate = 150 + Math.random()*50;
+    const brightness = 80 + Math.random()*40;
+    document.body.style.filter = `invert(${invert}) hue-rotate(${hue}deg) saturate(${saturate}%) brightness(${brightness}%)`;
+}
+
+function glitchEffect(level) {
+    const h1 = document.querySelector('h1');
+    const p = document.querySelector('p');
+    h1.textContent = h1.textContent.split('').map(() => randomGlitchChar()).join('');
+    p.textContent = p.textContent.split('').map(() => randomGlitchChar()).join('');
+    if(level >= 1) addRedGlitch(10);
+    if(level >= 2) {
+        document.body.style.marginLeft = (Math.random()*30-15) + 'px';
+        document.body.style.marginTop = (Math.random()*30-15) + 'px';
+    }
+    if(level >= 3){
+        addRedGlitch(20);
+        colorDistortion(level);
+    }
+    if(level >= 4){
+        addRedGlitch(30);
+        colorDistortion(level);
+        document.body.style.marginLeft = (Math.random()*40-20) + 'px';
+        document.body.style.marginTop = (Math.random()*40-20) + 'px';
+    }
+    if(level >= 5){
+        addRedGlitch(50);
+        colorDistortion(level);
+    }
+}
+
+icon.addEventListener('mouseenter', function handler() {
+    attempt++;
+    glitchEffect(attempt);
+    if(attempt < maxAttempts) {
+        randomPosition();
+    } else {
+        icon.style.display = 'none';
+        document.querySelectorAll('.glitchChar').forEach(c => {
+            const dx = (Math.random()-0.5)*2000;
+            const dy = (Math.random()-0.5)*2000;
+            c.animate([
+                {transform: 'translate(0,0) rotate(0deg)', opacity:1},
+                {transform: `translate(${dx}px,${dy}px) rotate(${Math.random()*720}deg)`, opacity:0}
+            ], {duration: 1500, easing: 'ease-out'});
+        });
+        setTimeout(()=>{
+            layer.innerHTML = '';
+            document.body.style.backgroundColor = '#111';
+            document.body.style.filter = 'none';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            iframeContainer.style.display = 'block';
+    }
+});
+</script>
+</body>
+</html>
