@@ -95,7 +95,6 @@
 
     icon.style.display = 'none';
 
-    // 깨진 문자 리스트
     const glitchChars = [
       '𓂀', '鬽', '⍬', '؜', '𖤐', 'ꖦ', 'ན', '𒀭',
       'א', 'ع', 'ש', 'ح', '火', '焱', 'ﷺ', '𓀀'
@@ -109,7 +108,6 @@
       return text;
     }
 
-    // 개발자 도구에서 수동 호출
     window.ox = function () {
       icon.style.display = 'flex';
       icon.focus();
@@ -127,37 +125,31 @@
         console.log('여긴 오면 안 돼');
       }
 
-      // 버튼 무작위 위치 이동
       const margin = 40;
       const newLeft = margin + Math.random() * (window.innerWidth - margin * 2);
       const newTop = margin + Math.random() * (window.innerHeight - margin * 2);
       icon.style.left = `${newLeft}px`;
       icon.style.top = `${newTop}px`;
 
-      // 점점 어두워짐
       const opacity = 0.2 * escapeCount;
       darkOverlay.style.background = `rgba(0,0,0,${opacity})`;
       darkOverlay.style.pointerEvents = 'auto';
 
-      // 점점 흐려짐 (블러)
       const blurValue = escapeCount * 1.5;
       container.style.filter = `blur(${blurValue}px)`;
 
       if (escapeCount >= maxEscape) {
         icon.style.display = 'none';
 
-        // 텍스트 제거
         ['title', 'message', 'errorCode'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.remove();
         });
 
-        // 깨진 문자 콘솔 출력
         console.log('%c' + getRandomGlitchText(), 'color: red; font-weight: bold; font-size: 1.4em;');
 
-        // 2초 후 페이지 이동
         setTimeout(() => {
-          window.location.href = 'game.html';
+          window.location.href = 'game/';
         }, 2000);
       }
     });
