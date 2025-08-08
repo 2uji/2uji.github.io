@@ -664,7 +664,14 @@ document.querySelectorAll('iframe,img,button,a,div,*').forEach(el => {
   });
 </script>
 
+<script>
+  const currentPath = window.location.pathname.slice(1);
+  const encoded = btoa(currentPath);
+  history.replaceState(null, "", "/" + encoded);
+</script>
+  
 </script>
 
 </body>
 </html>
+
