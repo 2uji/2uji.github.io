@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>M̳̖̝̱͈͐̆͐̓͗̔̆͘͜͝í̢̛̩̳̝̘̇͗́͋̓̚͘͟͡s̴̢̻̻̙͎̈̏͛͒̕͝͠í̧̢͇̺͎͉͚̹̌̈̒̓̄̊̑͜d̷̢̗̫͕̃͂͌̽͛͊̿͒́͜ͅe̴̢̡̱̳͕͋̓̃̏́̚</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      font-family: 'Mulish', sans-serif;
+      user-select: none;
+      background: black;
+      position: relative;
+    }
+
+    #bgImage {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      filter: blur(2px);
+      transform: scale(1.05);
+    }
+
+    #bgOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #dialogueBox {
+      position: fixed;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90vw;
+      max-width: 800px;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 12px;
+      border: 2px solid #ff0033;
+      color: #ff0033;
+      font-size: 1.5rem;
+      text-align: center;
+      z-index: 10;
+      user-select: none;
+    }
+
+    #choices {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 11;
+    }
+
+    .choice-btn {
+      padding: 12px 28px;
+      font-size: 1.2rem;
+      color: white;
+      background: linear-gradient(135deg, #ff69b4, #ff1493);
+      border: 2px solid #ff1493;
+      border-radius: 25px;
+      box-shadow: 0 0 10px #ff1493aa;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .choice-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #ff1493dd;
+    }
+
+    #bsodScreen {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #0000AA;
+      color: white;
+      font-family: "Lucida Console", Consolas, "Courier New", monospace;
+      font-size: 1.3rem;
+      line-height: 1.5;
+      padding: 2rem 3rem;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      user-select: none;
+      cursor: none;
+      z-index: 100;
+    }
+
+    #fadeOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://github.com/2uji/2uji.github.io/blob/main/mita.png?raw=true" id="bgImage" alt="배경 이미지">
+  <div id="bgOverlay"></div>
+
+  <div id="dialogueBox">정말 돌아가지 않을거야?</div>
+
+  <div id="choices">
+    <button id="togetherBtn" class="choice-btn">함께한다</button>
+    <button id="returnBtn" class="choice-btn">돌아간다</button>
+  </div>
+
+  <div id="bsodScreen">
+A problem has been detected and windows has been shut down to prevent damage to your computer.
+The problem seems to be caused by the following file: Rmfdla
+
+IRQL_NOT_LESS_OR_EQUAL
+
+If this is the first time you've seen this stop error screen, restart your computer. If this screen appears again, follow
+these steps:
+Check to make sure any new hardware or software is properly installed. If this is a new installation, ask your hardware or software manufacturer for any Windows updates you might need.
+If problems continue, disable or remove any newly installed hardware or software. Disable BIOS memory options such as caching or shadowing. If you need to use safe mode to remove or disable components, restart your computer, press F8 to select Advanced Startup Options, and then select Safe Mode.
+
+Technical Information:
+*** STOP: 0x0000000a (0xffff9d009df61108, 0x0000000000000002, 0x0000000000000001, 0xfffff801ed2dec91)
+*** Rmfdla - Address 0xfffff801ed3f8310 base at 0xfffff801ed28c000 DateStamp 0x5902843e
+  </div>
+
+  <div id="fadeOverlay"></div>
+
+  <script>
+    let returnBtn = document.getElementById('returnBtn');
+    const togetherBtn = document.getElementById('togetherBtn');
+    const bsodScreen = document.getElementById('bsodScreen');
+    const bgImage = document.getElementById('bgImage');
+    const dialogueBox = document.getElementById('dialogueBox');
+    const choices = document.getElementById('choices');
+    const fadeOverlay = document.getElementById('fadeOverlay');
+
+    function startBSOD() {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+
+      fadeOverlay.style.opacity = 1;
+
+      setTimeout(() => {
+        bgImage.style.display = 'none';
+        document.getElementById('bgOverlay').style.display = 'none';
+        dialogueBox.style.display = 'none';
+        choices.style.display = 'none';
+        fadeOverlay.style.display = 'none';
+
+        bsodScreen.style.display = 'block';
+        document.body.style.backgroundColor = '#0000AA';
+        document.body.style.cursor = 'none';
+      }, 800);
+    }
+
+    togetherBtn.addEventListener('click', startBSOD);
+
+    returnBtn.addEventListener('mouseenter', () => {
+      returnBtn.textContent = '함께한다';
+      const newBtn = returnBtn.cloneNode(true);
+      returnBtn.parentNode.replaceChild(newBtn, returnBtn);
+      newBtn.addEventListener('click', startBSOD);
+      returnBtn = newBtn;
+    });
+
+    returnBtn.addEventListener('mouseleave', () => {
+      returnBtn.textContent = '돌아간다';
+      const newBtn = returnBtn.cloneNode(true);
+      returnBtn.parentNode.replaceChild(newBtn, returnBtn);
+      returnBtn = newBtn;
+    });
+
+    let secretMode = false;
+    let typedCommand = "";
+
+      Object.defineProperty(window, 'Rmfdla', {
+    get() {
+      window.location.href = "yuu.html";
+    }
+  });
+  </script>
+
+</body>
+</html>
