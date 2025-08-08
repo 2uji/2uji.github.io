@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GAME</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: #0f0;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    user-select: none;
+    overflow: hidden;
+    position: relative;
+  }
+  #gameContainer {
+    position: relative;
+    width: 600px;
+    height: 150px;
+    background: #111;
+    border: 2px solid #0f0;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  #dino {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    line-height: 50px;
+    text-align: center;
+    user-select: none;
+    background: transparent;
+    color: #0f0;
+    transition: color 0.3s;
+  }
+  #obstacle {
+    position: absolute;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    background: #0f0;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+    color: red;
+    user-select: none;
+  }
+  #scoreContainer {
+    margin-top: 10px;
+    font-size: 1.5em;
+    color: #0f0;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    width: 600px;
+    /* 중앙 정렬 */
+    position: relative;
+  }
+  #scoreSpan, #scoreInput, #slash, #scoreMax {
+    font-weight: normal;
+    user-select: none;
+  }
+
+  #slash {
+    padding: 0 6px;
+    font-weight: bold;
+    user-select: none;
+  }
+
+  #scoreSpan, #slash, #scoreMax {
+  font-weight: normal;
+  user-select: none;
+  font-size: 1.5em;
+  line-height: 1.2em;
+  vertical-align: bottom;
+}
+
+
+  #scoreInput {
+  border: none;
+  background: transparent;
+  color: red;
+  font-family: monospace;
+  font-size: 1.5em;
+  line-height: 1.2em; 
+  font-weight: normal; 
+  width: auto;
+  min-width: 1ch;
+  max-width: 6ch;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: text;
+  display: none;
+  vertical-align: bottom;
+  box-sizing: content-box;
+}
+  #scoreInput:focus {
+    outline: none;
+  }
+  #instructions {
+    margin-top: 12px;
+    font-size: 1.3em;
+    color: #0f0;
+    user-select: none;
+    width: 600px;
+    text-align: center;
+    transition: color 0.3s;
+  }
+
+  body.corrupted {
+    background-color: #330000;
+  }
+  body.corrupted #gameContainer {
+    border-color: red;
+    background-color: #330000;
+  }
+  body.corrupted #dino {
+    color: red !important;
+  }
+  body.corrupted #obstacle {
+    background-color: transparent !important;
+  }
+  body.corrupted #scoreContainer,
+  body.corrupted #instructions {
+    color: red !important;
+  }
+
+  .glitchChar {
+    position: fixed;
+    color: red;
+    font-size: 2em;
+    pointer-events: none;
+    animation: flicker 0.3s infinite;
+    user-select: none;
+    z-index: 1000;
+    opacity: 0.7;
+    transform-origin: center center;
+    white-space: nowrap;
+    font-weight: bold;
+  }
+  @keyframes flicker {
+    0%, 100% {opacity: 0.3;}
+    50% {opacity: 1;}
+  }
+</style>
+</head>
+<body>
+  <div id="gameContainer" tabindex="0" aria-label="Dino jump game container">
+    <div id="dino">⚠️</div>
+    <div id="obstacle"></div>
+  </div>
+
+  <div id="scoreContainer" aria-live="polite" aria-atomic="true" role="region" >
+    <span id="scoreSpan">0</span>
+    <input id="scoreInput" type="text" aria-label="Current score" maxlength="6" value="" spellcheck="false" autocomplete="off" />
+    <span id="slash">/</span>
+    <span id="scoreMax">10</span>
+  </div>
+
+  <div id="instructions">SPACE</div>
+
+  <audio id="glitchSound" src="https://github.com/2uji/2uji.github.io/raw/refs/heads/main/glitch_beep.mp3" preload="auto"></audio>
+
+
+
+<script>
+    const currentPath = window.location.pathname.slice(1);
+  const encoded = btoa(currentPath);
+  history.replaceState(null, "", "/" + encoded);    
+
+
+  const body = document.body;
+  const dino = document.getElementById('dino');
+  const obstacle = document.getElementById('obstacle');
+  const scoreSpan = document.getElementById('scoreSpan');
+  const scoreInput = document.getElementById('scoreInput');
+  const scoreMaxDiv = document.getElementById('scoreMax');
+  const instructions = document.getElementById('instructions');
+  const glitchSound = document.getElementById('glitchSound');
+  const scoreContainer = document.getElementById('scoreContainer');
+  const slash = document.getElementById('slash');
+
+  let score = 0;
+  let maxScore = 10;
+  let isJumping = false;
+  const jumpHeight = 140;
+  const jumpDuration = 400;
+  let obstacleX = 600 + Math.random() * 200;
+  let obstacleSpeed = 5;
+  let isCorrupted = false;
+  let isHardMode = false;
+
+  const glitchChars = ['�','壊','崩','腐','敗','狂','乱','✖','✗','☠','☢','☣','⛧'];
+
+  let glitchCharsPool = [];
+
+  function createGlitchCharWord() {
+    const char = document.createElement('div');
+    char.className = 'glitchChar';
+
+    let text = '';
+    const baseWord = '돌아가';
+    for(let i=0; i < baseWord.length; i++){
+
+      if(Math.random() < 0.8){
+        text += glitchChars[Math.floor(Math.random()*glitchChars.length)];
+      } else {
+        text += baseWord[i];
+      }
+    }
+    char.textContent = text;
+
+    char.style.left = Math.random() * window.innerWidth + 'px';
+    char.style.top = Math.random() * window.innerHeight + 'px';
+    char.style.transform = `rotate(${(Math.random() * 60 - 30).toFixed(2)}deg)`;
+    body.appendChild(char);
+    return char;
+  }
+
+  function createGlitchBackground(count=40){
+    clearGlitches();
+    for(let i=0; i<count; i++){
+      glitchCharsPool.push(createGlitchCharWord());
+    }
+  }
+  function clearGlitches(){
+    glitchCharsPool.forEach(c => c.remove());
+    glitchCharsPool = [];
+  }
+
+  function shatteredEffectAndRedirect(){
+    const gameContainer = document.getElementById('gameContainer');
+    const glitchChars = document.querySelectorAll('.glitchChar');
+
+    const rows = 3;
+    const cols = 6;
+    const rect = gameContainer.getBoundingClientRect();
+    const pieceWidth = rect.width / cols;
+    const pieceHeight = rect.height / rows;
+
+    gameContainer.style.visibility = 'hidden';
+    glitchChars.forEach(c => c.style.visibility = 'hidden');
+
+    const piecesContainer = document.createElement('div');
+    piecesContainer.style.position = 'fixed';
+    piecesContainer.style.left = rect.left + 'px';
+    piecesContainer.style.top = rect.top + 'px';
+    piecesContainer.style.width = rect.width + 'px';
+    piecesContainer.style.height = rect.height + 'px';
+    piecesContainer.style.pointerEvents = 'none';
+    piecesContainer.style.zIndex = '10000';
+    document.body.appendChild(piecesContainer);
+
+    for(let r=0; r < rows; r++){
+      for(let c=0; c < cols; c++){
+        const piece = document.createElement('div');
+        piece.style.position = 'absolute';
+        piece.style.width = pieceWidth + 'px';
+        piece.style.height = pieceHeight + 'px';
+        piece.style.left = (c * pieceWidth) + 'px';
+        piece.style.top = (r * pieceHeight) + 'px';
+        piece.style.background = window.getComputedStyle(gameContainer).backgroundColor;
+        piece.style.border = '1px solid red';
+        piece.style.boxSizing = 'border-box';
+
+        piece.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+        piece.style.color = 'red';
+        piece.style.fontWeight = 'bold';
+        piece.style.fontSize = '1.5em';
+        piece.style.display = 'flex';
+        piece.style.justifyContent = 'center';
+        piece.style.alignItems = 'center';
+
+        piecesContainer.appendChild(piece);
+
+        const animDuration = 1000;
+        const animDelay = Math.random() * 500;
+
+        piece.animate([
+          { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+          { transform: `translate(${(Math.random()-0.5)*300}px, ${-100 + Math.random()*-200}px) rotate(${Math.random()*720}deg)`, opacity: 0 }
+        ], {
+          duration: animDuration,
+          delay: animDelay,
+          easing: 'ease-out',
+          fill: 'forwards'
+        });
+      }
+    }
+
+    setTimeout(() => {
+      window.location.href = 'mita.html';
+    }, 1500);
+  }
+
+  function updateScoreDisplay(){
+    if(score >= 10 && !isHardMode){
+      isHardMode = true;
+      maxScore = 999999;
+      scoreMaxDiv.textContent = maxScore.toString();
+
+      scoreSpan.style.display = 'none';
+      scoreInput.style.display = 'inline-block';
+      scoreInput.value = score.toString();
+
+      instructions.textContent = "SPACE";
+
+      body.classList.add('corrupted');
+      createGlitchBackground(40);
+      glitchSound.currentTime = 0;
+      glitchSound.play().catch(() => {});
+
+      dino.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+      dino.style.color = 'red';
+
+      obstacle.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+      obstacle.style.backgroundColor = 'transparent';
+      obstacle.style.color = 'red';
+
+      scoreMaxDiv.style.color = 'red';
+      scoreInput.style.color = 'red';
+      instructions.style.color = 'red';
+
+      document.getElementById('gameContainer').style.borderColor = 'red';
+
+      scoreContainer.style.justifyContent = 'center';
+      scoreSpan.style.fontWeight = 'normal';
+      slash.style.fontWeight = 'bold';
+      scoreMaxDiv.style.fontWeight = 'normal';
+
+      let locationMessage = document.getElementById('locationMessage');
+  if(!locationMessage) {
+    locationMessage = document.createElement('div');
+    locationMessage.id = 'locationMessage';
+    locationMessage.style.cssText = `
+      margin-top: 8px;
+      color: red;
+      font-family: monospace;
+      font-size: 1.2em;
+      text-align: center;
+      user-select: none;
+      pointer-events: none;
+      width: 600px;
+    `;
+    instructions.insertAdjacentElement('afterend', locationMessage);
+  }
+  fetch("https://ipapi.co/json/")
+    .then(res => res.json())
+    .then(data => {
+      alert("찾았다");
+      locationMessage.textContent = `IP: ${data.ip} / ${data.region} ${data.city}`;
+    })
+    .catch(() => {
+      locationMessage.textContent = 'IP/location info not available';
+    });
+
+    } else if (!isHardMode) {
+      scoreSpan.style.display = 'inline-block';
+      scoreSpan.textContent = score.toString();
+
+      scoreInput.style.display = 'none';
+      scoreInput.value = '';
+      scoreInput.classList.remove('red');
+
+      if(isCorrupted){
+        isCorrupted = false;
+        body.classList.remove('corrupted');
+        clearGlitches();
+      }
+      obstacle.style.backgroundColor = '#0f0';
+      obstacle.style.color = '#0f0';
+      dino.textContent = '⚠️';
+      dino.style.color = '#0f0';
+
+      scoreMaxDiv.style.color = '#0f0';
+      instructions.style.color = '#0f0';
+      document.getElementById('gameContainer').style.borderColor = '#0f0';
+
+      scoreContainer.style.justifyContent = 'center';
+      slash.style.fontWeight = 'normal';
+      scoreMaxDiv.style.fontWeight = 'normal';
+    }
+
+    if(isHardMode){
+      scoreInput.value = score.toString();
+      scoreMaxDiv.textContent = maxScore.toString();
+
+      if(scoreInput.value === '999999'){
+        if(!window.shatteredStarted){
+          window.shatteredStarted = true;
+          shatteredEffectAndRedirect();
+        }
+      }
+    }
+  }
+
+  function jump(){
+    if(isJumping) return;
+    isJumping = true;
+    const startBottom = 0;
+    let startTime = null;
+
+    function animateJump(timestamp){
+      if(!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+
+      if(elapsed < jumpDuration / 2){
+        const progress = elapsed / (jumpDuration / 2);
+        dino.style.bottom = (startBottom + jumpHeight * progress) + 'px';
+        requestAnimationFrame(animateJump);
+      } else if(elapsed < jumpDuration){
+        const progress = (elapsed - jumpDuration / 2) / (jumpDuration / 2);
+        dino.style.bottom = (startBottom + jumpHeight * (1 - progress)) + 'px';
+        requestAnimationFrame(animateJump);
+      } else {
+        dino.style.bottom = startBottom + 'px';
+        isJumping = false;
+      }
+    }
+    requestAnimationFrame(animateJump);
+  }
+
+  function checkCollision(){
+    const dinoRect = dino.getBoundingClientRect();
+    const obsRect = obstacle.getBoundingClientRect();
+
+    return !(
+      dinoRect.right < obsRect.left ||
+      dinoRect.left > obsRect.right ||
+      dinoRect.bottom < obsRect.top ||
+      dinoRect.top > obsRect.bottom
+    );
+  }
+
+  function resetGame(){
+    if(isHardMode){
+      obstacleX = 600 + Math.random() * 300;
+      obstacle.style.left = obstacleX + 'px';
+
+      obstacle.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+      obstacle.style.color = 'red';
+      obstacle.style.backgroundColor = 'transparent';
+
+      dino.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+      dino.style.color = 'red';
+
+      return;
+    }
+    score = 0;
+    maxScore = 10;
+
+    scoreSpan.style.display = 'inline-block';
+    scoreSpan.textContent = '0';
+
+    scoreInput.style.display = 'none';
+    scoreInput.value = '';
+    scoreInput.classList.remove('red');
+
+    if(isCorrupted){
+      isCorrupted = false;
+      body.classList.remove('corrupted');
+      clearGlitches();
+    }
+
+    obstacleX = 600 + Math.random() * 200;
+    obstacle.style.left = obstacleX + 'px';
+
+    obstacle.textContent = '';
+    obstacle.style.backgroundColor = '#0f0';
+    obstacle.style.color = '#0f0';
+
+    dino.textContent = '⚠️';
+    dino.style.color = '#0f0';
+    dino.style.bottom = '0px';
+
+    scoreMaxDiv.style.color = '#0f0';
+    instructions.style.color = '#0f0';
+    document.getElementById('gameContainer').style.borderColor = '#0f0';
+
+    scoreContainer.style.justifyContent = 'center';
+    slash.style.fontWeight = 'normal';
+  }
+
+  function gameLoop(){
+    obstacleX -= obstacleSpeed;
+    if(obstacleX < -20){
+      if(isHardMode){
+        obstacleX = 600 + Math.random() * 300;
+        obstacle.textContent = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+        obstacle.style.color = 'red';
+        obstacle.style.backgroundColor = 'transparent';
+      } else {
+        obstacleX = 600 + Math.random() * 200;
+        obstacle.textContent = '';
+        obstacle.style.backgroundColor = '#0f0';
+        obstacle.style.color = '#0f0';
+      }
+      score++;
+      updateScoreDisplay();
+    }
+    obstacle.style.left = obstacleX + 'px';
+
+    if(checkCollision()){
+      resetGame();
+    }
+
+    if(score >= 999999){
+      if(!window.shatteredStarted){
+        window.shatteredStarted = true;
+        shatteredEffectAndRedirect();
+      }
+    }
+  }
+
+  scoreInput.addEventListener('input', () => {
+    let val = scoreInput.value.replace(/[^0-9]/g, '');
+    if(val.length > 6) val = val.slice(0,6);
+    scoreInput.value = val;
+    if(val === '') val = '0';
+    score = parseInt(val, 10);
+    updateScoreDisplay();
+
+    if(scoreInput.value === '999999'){
+      if(!window.shatteredStarted){
+        window.shatteredStarted = true;
+        shatteredEffectAndRedirect();
+      }
+    }
+  });
+
+  window.addEventListener('keydown', e => {
+    if((e.code === 'Space' || e.key === ' ') && !isJumping){
+      e.preventDefault();
+      jump();
+    }
+  });
+
+  updateScoreDisplay();
+  setInterval(gameLoop, 20);
+</script>
+</body>
+</html>
+
