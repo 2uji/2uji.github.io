@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <title>test</title>
 <style>
+  <script>
+  const currentPath = window.location.pathname.slice(1);
+  const encoded = btoa(currentPath);
+  history.replaceState(null, "", "/" + encoded);
+</script>
   @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap');
   html, body {
     margin: 0; padding: 0;
@@ -298,4 +303,5 @@ window.addEventListener('touchstart', e => {
 </body>
 
 </html>
+
 
