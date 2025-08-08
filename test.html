@@ -111,22 +111,32 @@
   });
   let clickCount = 0;
   const maxClicks = 20;
-  window.addEventListener('mousedown', () => {
-    if(exploded) return;
-    faces.forEach(f => {
-      const dx = f.x - mouse.x;
-      const dy = f.y - mouse.y;
-      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-      const power = 40;
-      f.vx = (dx/dist) * (Math.random() * power);
-      f.vy = (dy/dist) * (Math.random() * power);
-    });
-    clickCount++;
-    if(clickCount >= maxClicks){
-      exploded = true;
-      startExplosion();
-    }
+  function handleClick() {
+  if (exploded) return;
+  faces.forEach(f => {
+    const dx = f.x - mouse.x;
+    const dy = f.y - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    const power = 40;
+    f.vx = (dx / dist) * (Math.random() * power);
+    f.vy = (dy / dist) * (Math.random() * power);
   });
+  clickCount++;
+  if (clickCount >= maxClicks) {
+    exploded = true;
+    startExplosion();
+  }
+}
+
+window.addEventListener('mousedown', handleClick);
+window.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  mouse.x = touch.clientX;
+  mouse.y = touch.clientY;
+  handleClick();
+}, { passive: false });
+
   function addCombiningMarks(char, intensity) {
     let count = Math.min(10, Math.floor(intensity * 10));
     let result = char;
@@ -288,3 +298,4 @@
 </body>
 
 </html>
+
