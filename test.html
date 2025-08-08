@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>404 - 조합문자 깨짐 효과</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap');
+  html, body {
+    margin: 0; padding: 0;
+    width: 100vw; height: 100vh;
+    background: #ffe8f0;
+    font-family: 'Nanum Gothic', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 1s ease;
+    position: relative;
+  }
+  #textContainer {
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 10;
+  }
+  #mainText {
+    font-weight: 900;
+    font-size: 15vw;
+    color: #ff5c8d;
+    line-height: 1;
+    margin: 0;
+    user-select:none;
+    transition: color 1s ease;
+  }
+  #subText {
+    font-weight: 700;
+    font-size: 4vw;
+    color: #ff85ab;
+    letter-spacing: 0.15em;
+    margin: 0;
+    user-select:none;
+    transition: color 1s ease;
+  }
+  .face-piece {
+    position: absolute;
+    font-size: 2rem;
+    color: #ffbdd4;
+    user-select: none;
+    pointer-events: none;
+    transform-origin: center center;
+    will-change: transform;
+    opacity: 0.85;
+    white-space: nowrap;
+    transition: color 1s ease;
+  }
+</style>
+</head>
+<body>
+  <div id="textContainer">
+    <h1 id="mainText">404</h1>
+    <p id="subText">page not found</p>
+  </div>
+<script>
+  const NUM_FACES = 50;
+  const faces = [];
+  const baseColors = ['#ffbdd4', '#fbb1c8', '#ff8ab4', '#ff6398'];
+  const combiningMarks = [
+    '\u0300', '\u0301', '\u0302', '\u0303', '\u0304', '\u0305', '\u0306', '\u0307', '\u0308', '\u0309',
+    '\u030A', '\u030B', '\u030C', '\u030D', '\u030E', '\u030F', '\u0310', '\u0311', '\u0312', '\u0313',
+    '\u0314', '\u0315', '\u0316', '\u0317', '\u0318', '\u0319', '\u031A', '\u031B', '\u031C', '\u031D',
+    '\u031E', '\u031F', '\u0320', '\u0321', '\u0322', '\u0323', '\u0324', '\u0325', '\u0326', '\u0327',
+    '\u0328', '\u0329', '\u032A', '\u032B', '\u032C', '\u032D', '\u032E', '\u032F', '\u0330', '\u0331',
+    '\u0332', '\u0333', '\u0334', '\u0335', '\u0336', '\u0337', '\u0338', '\u0339', '\u033A', '\u033B',
+    '\u033C', '\u033D', '\u033E', '\u033F', '\u0340', '\u0341', '\u0342', '\u0343', '\u0344', '\u0345',
+    '\u0346', '\u0347', '\u0348', '\u0349', '\u034A', '\u034B', '\u034C', '\u034D', '\u034E', '\u034F',
+    '\u0350', '\u0351', '\u0352', '\u0353', '\u0354', '\u0355', '\u0356', '\u0357', '\u0358', '\u0359',
+    '\u035A', '\u035B', '\u035C', '\u035D', '\u035E', '\u035F', '\u0360', '\u0361', '\u0362'
+  ];
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  const mouse = { x: width / 2, y: height / 2 };
+  const mainTextEl = document.getElementById('mainText');
+  const subTextEl = document.getElementById('subText');
+  const nextPage = 'nextpage.html';
+  let exploded = false;
+  for (let i = 0; i < NUM_FACES; i++) {
+    const span = document.createElement('span');
+    span.textContent = 'ㅇㅅㅇ';
+    span.className = 'face-piece';
+    span.style.color = baseColors[i % baseColors.length];
+    document.body.appendChild(span);
+    faces.push({
+      el: span,
+      x: Math.random() * width,
+      y: Math.random() * height,
+      angle: Math.random() * 360,
+      speed: 0.3 + Math.random(),
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      baseText: 'ㅇㅅㅇ'
+    });
+  }
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  let clickCount = 0;
+  const maxClicks = 20;
+  window.addEventListener('mousedown', () => {
+    if(exploded) return;
+    faces.forEach(f => {
+      const dx = f.x - mouse.x;
+      const dy = f.y - mouse.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const power = 40;
+      f.vx = (dx/dist) * (Math.random() * power);
+      f.vy = (dy/dist) * (Math.random() * power);
+    });
+    clickCount++;
+    if(clickCount >= maxClicks){
+      exploded = true;
+      startExplosion();
+    }
+  });
+  function addCombiningMarks(char, intensity) {
+    let count = Math.min(10, Math.floor(intensity * 10));
+    let result = char;
+    for(let i=0; i<count; i++) {
+      const mark = combiningMarks[Math.floor(Math.random() * combiningMarks.length)];
+      result += mark;
+    }
+    return result;
+  }
+  function glitchText(element, intensity) {
+    const text = element.dataset.original || element.textContent;
+    if(!element.dataset.original) element.dataset.original = text;
+    let result = '';
+    for(let char of text) {
+      if(char.trim() === '') {
+        result += char;
+        continue;
+      }
+      result += addCombiningMarks(char, intensity);
+    }
+    element.textContent = result;
+  }
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+  function lerpColor(a, b, t) {
+    return Math.round(a + (b - a) * t);
+  }
+  const scaryWords = ['乱', '呪', '呪い'];
+  function getRandomScaryWord() {
+    return scaryWords[Math.floor(Math.random() * scaryWords.length)];
+  }
+  function animate() {
+    if(exploded) return;
+    let intensity = (clickCount / maxClicks);
+    if(intensity > 1) intensity = 1;
+    const glitchStart = 5;
+    let glitchIntensity = 0;
+    if (clickCount >= glitchStart) {
+      glitchIntensity = (clickCount - glitchStart) / (maxClicks - glitchStart);
+      if (glitchIntensity > 1) glitchIntensity = 1;
+    }
+    faces.forEach(f => {
+      f.angle += f.speed;
+      if (f.angle >= 360) f.angle -= 360;
+      f.vx += (mouse.x - f.x) * 0.0003;
+      f.vy += (mouse.y - f.y) * 0.0003;
+      f.vx *= 0.96;
+      f.vy *= 0.96;
+      f.x += f.vx;
+      f.y += f.vy;
+      if(f.x <= 0 || f.x >= width) {
+        f.vx *= -1;
+        f.x = Math.max(0, Math.min(width, f.x));
+      }
+      if(f.y <= 0 || f.y >= height) {
+        f.vy *= -1;
+        f.y = Math.max(0, Math.min(height, f.y));
+      }
+      if(intensity > 0.3) {
+        f.el.textContent = getRandomScaryWord();
+      } else {
+        f.el.textContent = f.baseText;
+      }
+      const baseColor = {r: 255, g: 189, b: 212};
+      const targetColor = {r: 255, g: 0, b: 0};
+      const r = lerpColor(baseColor.r, targetColor.r, intensity);
+      const g = lerpColor(baseColor.g, targetColor.g, intensity);
+      const b = lerpColor(baseColor.b, targetColor.b, intensity);
+      f.el.style.color = `rgb(${r},${g},${b})`;
+      f.el.style.left = `${f.x}px`;
+      f.el.style.top = `${f.y}px`;
+      f.el.style.transform = `translate(-50%, -50%) rotate(${f.angle}deg)`;
+    });
+    let r = 255;
+    let g = 92 - intensity * 70;
+    let b = 141 - intensity * 90;
+    mainTextEl.style.color = `rgb(${r},${Math.max(0,g)},${Math.max(0,b)})`;
+    subTextEl.style.color = `rgb(${r},${Math.max(0,g)},${Math.max(0,b)})`;
+    const bgR = lerp(255, 0, intensity);
+    const bgG = lerp(232, 0, intensity);
+    const bgB = lerp(240, 0, intensity);
+    document.body.style.backgroundColor = `rgb(${bgR},${bgG},${bgB})`;
+    glitchText(mainTextEl, glitchIntensity);
+    glitchText(subTextEl, glitchIntensity);
+    requestAnimationFrame(animate);
+  }
+  animate();
+  function startExplosion() {
+    const explosionDuration = 3000;
+    const startTime = performance.now();
+    faces.forEach(f => {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 15 + Math.random() * 10;
+      f.vx = Math.cos(angle) * speed;
+      f.vy = Math.sin(angle) * speed;
+      f.exploded = true;
+    });
+    const mainTextAngle = Math.random() * 360;
+    const mainTextVX = (Math.random() - 0.5) * 30;
+    const mainTextVY = (Math.random() - 0.5) * 30;
+    const subTextAngle = Math.random() * 360;
+    const subTextVX = (Math.random() - 0.5) * 30;
+    const subTextVY = (Math.random() - 0.5) * 30;
+    let mainTextState = { angle: mainTextAngle, vx: mainTextVX, vy: mainTextVY, x: width/2, y: height/2 - 50 };
+    let subTextState = { angle: subTextAngle, vx: subTextVX, vy: subTextVY, x: width/2, y: height/2 + 50 };
+    function explosionStep(time) {
+      const elapsed = time - startTime;
+      const t = elapsed / explosionDuration;
+      faces.forEach(f => {
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vx *= 0.95;
+        f.vy *= 0.95;
+        f.el.style.left = `${f.x}px`;
+        f.el.style.top = `${f.y}px`;
+        f.el.style.opacity = `${Math.max(0, 1 - t)}`;
+        const scale = 1 + 0.5 * Math.sin(t * 20 * Math.PI);
+        f.el.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${f.angle}deg)`;
+        f.el.style.color = `rgb(255, 0, 0)`;
+      });
+
+      mainTextState.x += mainTextState.vx;
+      mainTextState.y += mainTextState.vy;
+      mainTextState.vx *= 0.95;
+      mainTextState.vy *= 0.95;
+      mainTextState.angle += 15;
+      mainTextEl.style.position = 'absolute';
+      mainTextEl.style.left = `${mainTextState.x}px`;
+      mainTextEl.style.top = `${mainTextState.y}px`;
+      mainTextEl.style.transform = `translate(-50%, -50%) rotate(${mainTextState.angle}deg)`;
+      mainTextEl.style.opacity = `${Math.max(0, 1 - t)}`;
+      mainTextEl.style.color = `rgb(255, 0, 0)`;
+      subTextState.x += subTextState.vx;
+      subTextState.y += subTextState.vy;
+      subTextState.vx *= 0.95;
+      subTextState.vy *= 0.95;
+      subTextState.angle += 15;
+      subTextEl.style.position = 'absolute';
+      subTextEl.style.left = `${subTextState.x}px`;
+      subTextEl.style.top = `${subTextState.y}px`;
+      subTextEl.style.transform = `translate(-50%, -50%) rotate(${subTextState.angle}deg)`;
+      subTextEl.style.opacity = `${Math.max(0, 1 - t)}`;
+      subTextEl.style.color = `rgb(255, 0, 0)`;
+      document.body.style.backgroundColor = `rgb(0,0,0)`;
+      if(t < 1) {
+        requestAnimationFrame(explosionStep);
+      } else {
+        window.location.href = nextPage;
+      }
+    }
+    requestAnimationFrame(explosionStep);
+  }
+  window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+  });
+</script>
+</body>
+</html>
