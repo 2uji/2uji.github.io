@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>404</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    width: 100vw; height: 100vh;
+    background: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    overflow: hidden;
+    font-family: monospace, monospace;
+  }
+  .smile {
+    font-size: 2rem;
+    color: #ff4444aa;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+  <div class="smile">ㅇㅅㅇ</div>
+
+  <script>
+    (function(){
+      const path = window.location.pathname.slice(1);
+      try {
+        const decoded = atob(path);
+
+        if (/\.html?$/.test(decoded)) {
+          window.location.replace(decoded);
+          return;
+        }
+      } catch(e) {
+      }
+    })();
+  </script>
+</body>
+</html>
