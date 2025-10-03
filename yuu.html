@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reze</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000;font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    .bg-video{
+      position:fixed;inset:0;z-index:0;overflow:hidden;
+    }
+    .bg-video video{
+      position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);
+      width:100vw;height:100vh;object-fit:cover;min-width:100%;min-height:100%;
+    }
+    .poster-wrap{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;
+      pointer-events:auto;
+    }
+    .poster{
+      max-width:80vw;max-height:80vh;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);cursor:pointer;transition:opacity 1s ease;display:block;
+      user-select:none;
+    }
+    .poster.fade-out{opacity:0}
+    .hint{
+      position:fixed;bottom:8vh;left:50%;transform:translateX(-50%);z-index:6;color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-size:14px;
+    }
+    .unmute-btn{
+      position:fixed;top:18px;right:18px;z-index:7;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff;border:none;cursor:pointer;display:none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-video" aria-hidden="true">
+    <video id="bgVideo" playsinline preload="metadata" muted loop>
+      <source src="https://github.com/2uji/2uji.github.io/raw/refs/heads/main/Reze.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+
+  <div class="poster-wrap">
+    <img id="poster" class="poster" src="https://github.com/2uji/2uji.github.io/blob/main/Reze.jpg?raw=true" alt="클릭하여 재생" role="button" aria-label="비디오 재생" />
+  </div>
+
+  <button id="unmute" class="unmute-btn">음소거 해제</button>
+
+  <script>
+    const poster = document.getElementById('poster');
+    const video = document.getElementById('bgVideo');
+    const unmuteBtn = document.getElementById('unmute');
+    const hint = document.getElementById('hint');
+
+    poster.addEventListener('click', () => {
+      poster.classList.add('fade-out');
+      if (hint) hint.style.display = 'none';
+
+      setTimeout(async () => {
+        poster.style.display = 'none';
+        try {
+          video.muted = false;
+          video.currentTime = 0;
+          await video.play();
+          unmuteBtn.style.display = 'none';
+        } catch (err) {
+          console.warn('Autoplay with audio failed, fallback to muted.', err);
+          try {
+            video.muted = true;
+            await video.play();
+            unmuteBtn.style.display = 'block';
+            unmuteBtn.focus();
+          } catch (err2) {
+            console.error('Muted playback failed too:', err2);
+            video.controls = true;
+            unmuteBtn.style.display = 'block';
+          }
+        }
+      }, 1000);
+    });
+
+    unmuteBtn.addEventListener('click', async () => {
+      try {
+        video.muted = false;
+        if (video.paused) await video.play();
+        unmuteBtn.style.display = 'none';
+      } catch (err) {
+        console.error('Failed to unmute/play:', err);
+      }
+    });
+
+    video.addEventListener('playing', () => {
+      poster.style.display = 'none';
+    });
+
+    poster.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        poster.click();
+      }
+    });
+
+    document.querySelector('.bg-video').style.pointerEvents = 'none';
+  </script>
+</body>
+</html>
