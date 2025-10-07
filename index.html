@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 Not Found</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff;
+      color: #000;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      position: relative;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      padding: 20px;
+    }
+
+    h1 { 
+      font-size: 5em; 
+      margin: 0.2em 0; 
+      cursor: pointer;
+    }
+    p { margin: 0.2em 0; }
+    #errorCode { font-size: 0.9em; color: #999; }
+
+    #passwordToggle {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border-radius: 12px;
+      color: #fff;
+      z-index: 2000;
+    }
+    #passwordToggle input {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+    #passwordToggle button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      background-color: #fff;
+      color: #000;
+    }
+    #errorMsg { color: #f55; font-size: 14px; display: none; }
+
+    #contentFrame {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      border: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    #fadeOverlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 3000;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1 id="zero">404</h1>
+    <p>Page Not Found</p>
+    <p id="errorCode">Error_Code Bomb!</p>
+  </div>
+
+  <div id="passwordToggle">
+    <input type="password" id="passwordInput" placeholder="Enter password" />
+    <button id="submitPassword">Enter</button>
+    <div id="errorMsg">Fail</div>
+  </div>
+
+  <iframe id="contentFrame"></iframe>
+  <div id="fadeOverlay"></div>
+
+  <script>
+    const zero = document.getElementById('zero');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('passwordInput');
+    const submitPassword = document.getElementById('submitPassword');
+    const errorMsg = document.getElementById('errorMsg');
+    const contentFrame = document.getElementById('contentFrame');
+    const container = document.getElementById('container');
+    const fadeOverlay = document.getElementById('fadeOverlay');
+
+    async function sha256(str) {
+      if (!window.crypto || !crypto.subtle) {
+        console.error('Web Crypto API not available in this browser.');
+        throw new Error('Web Crypto API not available');
+      }
+      const buf = new TextEncoder().encode(str);
+      const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hashBuf))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    const correctHash = 'e65f0dea598d37fd645ffca389c0846c431cfed03b919388e03c70a6ce8627a2';
+
+    zero.addEventListener('click', () => {
+      passwordToggle.style.display = passwordToggle.style.display === 'flex' ? 'none' : 'flex';
+      passwordInput.value = '';
+      errorMsg.style.display = 'none';
+      passwordInput.focus();
+    });
+
+    function openYuu() {
+      fadeOverlay.style.pointerEvents = 'auto';
+      fadeOverlay.style.opacity = 1;
+
+      setTimeout(() => {
+        container.style.display = 'none';
+        passwordToggle.style.display = 'none';
+        contentFrame.src = 'Reze.html';
+        contentFrame.style.display = 'block';
+      }, 1000);
+    }
+
+    contentFrame.addEventListener('load', () => {
+      fadeOverlay.style.transition = 'opacity 0.6s ease';
+      fadeOverlay.style.opacity = 0;
+      setTimeout(() => {
+        fadeOverlay.style.pointerEvents = 'none';
+        fadeOverlay.style.display = 'none';
+      }, 600);
+    });
+
+    submitPassword.addEventListener('click', async () => {
+      errorMsg.style.display = 'none';
+      try {
+        const val = passwordInput.value.trim();
+        const hash = await sha256(val);
+        if (hash === correctHash) {
+          openYuu();
+        } else {
+          errorMsg.style.display = 'block';
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = 'Error';
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    passwordInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') submitPassword.click();
+    });
+  </script>
+</body>
+</html>
