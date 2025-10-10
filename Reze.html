@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Reze</title>
+  <link rel="stylesheet" href="/reze-site/css/reze.css">
+</head>
+<body>
+  <script src="/reze-site/js/reze.js"></script>
+<div class="poster-wrap">
+    <img id="poster" class="poster" src="assets/Reze.jpg" alt="Click to Play">
+</div>
+
+<div class="bg-video">
+    <video id="bgVideo" playsinline preload="metadata" muted loop>
+        <source src="assets/Reze.mp4" type="video/mp4">
+    </video>
+</div>
+
+<button id="unmute" class="unmute-btn">Unmute</button>
+<div id="consoleOverlay"></div>
+
+<div id="cloudPanel">
+  <h3>Cloud Access Panel <span class="closeBtn" id="closeCloud">✖</span></h3>
+  <div class="file-list"></div>
+</div>
+
+<div id="chatPanel" aria-hidden="true">
+  <div id="chatHeader">
+    <div class="title">Chat</div>
+    <div class="controls">
+      <button id="nickBtn" class="small-btn" title="Change Nickname">Name</button>
+      <button id="clearChatBtn" class="small-btn" title="Clear Chat">Clear</button>
+      <button id="closeChatBtn" class="small-btn" title="Close Chat">Close</button>
+    </div>
+  </div>
+  <div id="chatMessages" role="log" aria-live="polite"></div>
+  <div class="chat-input-wrap">
+    <input id="chatInput" class="chat-input" placeholder="Type a message (Enter = Send)" />
+    <button id="chatSend" class="chat-send">Send</button>
+  </div>
+  <div id="chatFooter">Chat is real-time with Firebase.</div>
+</div>
+
+<div id="nickModal">
+  <div>Enter new nickname:</div>
+  <input id="nickInput" placeholder="Nickname" />
+  <div class="modal-buttons">
+    <button id="nickSave">Save</button>
+    <button id="nickCancel">Cancel</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
