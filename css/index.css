@@ -106,7 +106,7 @@ p {
 #irisOutScreen img {
   max-width: 80vw;
   max-height: 80vh;
-  content: url("/reze/assets/irisoutcover.jpg");
+  content: url("./assets/irisoutcover.jpg");
 }
 
 #contentFrame {
