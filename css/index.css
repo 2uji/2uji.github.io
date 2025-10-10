@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  background-color: #fff;
+  color: #000;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  transition: background-color 1s;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  transition: opacity 1s;
+}
+
+h1 {
+  font-size: 5em;
+  margin: 0.2em 0;
+  cursor: pointer;
+}
+
+p { margin: 0.2em 0; }
+
+#errorCode {
+  font-size: 0.9em;
+  color: #999;
+}
+
+#passwordToggle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  padding: 20px;
+  border-radius: 12px;
+  color: #fff;
+  z-index: 2000;
+  transition: opacity 1s;
+}
+
+#passwordToggle input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+#passwordToggle button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #fff;
+  color: #000;
+}
+
+#errorMsg {
+  color: #f55;
+  font-size: 14px;
+  display: none;
+}
+
+#flashLayer {
+  position: fixed;
+  inset: 0;
+  background-color: red;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3000;
+  transition: opacity 0.1s;
+}
+
+#irisOutScreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  flex-direction: column;
+  transition: opacity 1s;
+}
+
+#irisOutScreen img {
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+#contentFrame {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  border: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
