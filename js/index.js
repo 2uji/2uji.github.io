@@ -37,13 +37,13 @@ function triggerFlash() {
 }
 
 function openIrisOut() {
-  audioBomb = new Audio('/reze/assets/Bomb!.mp3');
+  audioBomb = new Audio('./assets/Bomb!.mp3');
   audioBomb.volume = 1;
   audioBomb.addEventListener('play', triggerFlash);
   audioBomb.play().catch(() => {});
 
   setTimeout(() => {
-    audioIrisOut = new Audio('/reze/assets/IRIS OUT.mp3');
+    audioIrisOut = new Audio('./assets/IRIS OUT.mp3');
     audioIrisOut.volume = 1;
     audioIrisOut.play().catch(() => {});
   }, 1000);
@@ -97,7 +97,7 @@ document.onkeydown = e => {
     container.style.opacity = passwordToggle.style.opacity = irisOutScreen.style.opacity = '0';
     setTimeout(() => {
       container.style.display = passwordToggle.style.display = irisOutScreen.style.display = 'none';
-      contentFrame.src = '/reze/Reze.html';
+      contentFrame.src = './Reze.html';
       contentFrame.style.display = 'block';
     }, 1000);
     rezeBuffer = '';
