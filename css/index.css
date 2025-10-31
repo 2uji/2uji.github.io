@@ -102,11 +102,11 @@ p{margin:.25em 0;line-height:1.2;}
 
 #gom {
   position:fixed;
-  width:8%;
+  width:5%;
   height:auto;
   z-index:1;
   cursor:pointer;
-  filter:drop-shadow(0 0 20px rgba(169,116,255,0.6));
   transition:transform 0.1s linear;
   display:none;
 }
+
