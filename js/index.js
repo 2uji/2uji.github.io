@@ -67,18 +67,24 @@ function startCut(){
   },1100)
 }
 
-function showReze1(){
-  setTimeout(()=>reze1.style.opacity=1,200)
-  reze1.addEventListener('click',()=>{
-    vid.muted=false
-    vid.style.display='block'
-    vid.style.opacity='0'
-    vid.style.transition='opacity 1.8s ease'
-    vid.play().catch(()=>{})
-    setTimeout(()=>vid.style.opacity='1',100)
-  },{once:true})
-  cutScene.addEventListener('click',showReze2,{once:true})
+function showReze1() {
+  setTimeout(() => (reze1.style.opacity = 1), 200)
+
+  reze1.addEventListener(
+    'click',
+    () => {
+      vid.muted = false
+      vid.style.display = 'block'
+      vid.style.opacity = '0'
+      vid.style.transition = 'opacity 1.8s ease'
+      vid.play().catch(() => {})
+      setTimeout(() => (vid.style.opacity = '1'), 100)
+      showReze2()
+    },
+    { once: true }
+  )
 }
+
 
 function showReze2(){
   reze2.style.transition='opacity 1.2s ease-out'
