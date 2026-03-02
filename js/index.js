@@ -132,6 +132,7 @@ pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.cli
 submitBtn.addEventListener('click', async () => {
   const hash = await sha256(pwdInput.value.trim())
   if (hash === CORRECT_HASH) {
+    document.title = '융융'
     const favicon = document.querySelector("link[rel~='icon']")
     if (favicon) favicon.href = 'assets/discord.png'
     else {
@@ -177,6 +178,7 @@ function showYunyun() {
     setTimeout(() => { cutScene.style.display = 'none'; launchMainScene() }, 1000)
   }
   yunyun.addEventListener('click', proceed, { once: true })
+}
 
 let mainSceneActive = false
 
@@ -266,7 +268,7 @@ function stopIdle() { clearInterval(idleInterval) }
 
 document.addEventListener('visibilitychange', () => {
   if (!mainSceneActive) return
-  document.title = document.hidden ? '돌아와융...' : '404 Not Found'
+  document.title = document.hidden ? '돌아와융...' : '융융'
   if (!document.hidden && consoleOverlay.classList.contains('open'))
     speak('보고싶었어융!')
 })
@@ -995,4 +997,3 @@ PanelManager.register('chat', chatBox, {
     return { left: 40, top: vh - ph - 40, right: 340, bottom: vh - 40 }
   }
 })
-
