@@ -1,6 +1,7 @@
 const ADMIN_CMDS = ['discord', 'cloud', 'clear']
 
 const COMMANDS = {
+  omok() { openOmok() },
   help() { triggerWallBreak() },
   mute() {
     vid.muted = !vid.muted
