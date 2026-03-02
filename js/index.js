@@ -218,7 +218,7 @@ const HELP_LIST = [
   { cmd: 'help',    desc: '이 목록을 다시 보여줘융!' },
   { cmd: 'mute',    desc: '영상 소리 켜고 끄기에융!' },
   { cmd: 'discord', desc: '디스코드 봇 초대 링크에융!' },
-  { cmd: 'close',   desc: '콘솔 닫기융!' },
+  { cmd: 'close',   desc: '콘솔 닫기에융!' },
 ]
 
 let wallActive = false
@@ -250,7 +250,7 @@ function triggerWallBreak() {
     wallList.appendChild(div)
   })
 
-  wallBreak.classList.add('active')
+  wallBreak.style.display = 'block'
   requestAnimationFrame(() => {
     wallCharaWrap.classList.add('slide-in')
     wallPanel.classList.add('slide-in')
@@ -273,7 +273,7 @@ function closeWallBreak() {
   consoleInput.placeholder = '명령어를 입력하세융!'
 
   setTimeout(() => {
-    wallBreak.classList.remove('active')
+    wallBreak.style.display = 'none'
     wallCharaWrap.classList.remove('slide-out')
     wallPanel.classList.remove('slide-out')
     wallActive = false
