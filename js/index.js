@@ -271,6 +271,7 @@ const HELP_LIST = [
 const HELP_LIST_ADMIN = [
   { cmd: 'discord', desc: '디스코드 봇 초대 링크에융!' },
   { cmd: 'cloud',   desc: '자료실 불러오기에융!' },
+  { cmd: 'clear',   desc: '채팅 청소하기에융!' }
 ]
 
 function triggerWallBreak() {
