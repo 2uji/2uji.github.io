@@ -41,7 +41,6 @@
       </div>
     </div>
   </div>
-
   <div id="wallBreak" style="display:none">
     <div id="wallCharaWrap">
       <div id="wallSpeech">
@@ -55,6 +54,70 @@
       <div id="wallList"></div>
     </div>
   </div>
+  <div id="chatBox">
+    <div id="chatResizeE"></div>
+    <div id="chatResizeN"></div>
+    <div id="chatHeader">
+      <div id="chatHeaderLeft">
+        <span id="chatTitle">// LIVE CHAT</span>
+        <span id="chatUserCount">0</span>
+      </div>
+      <div id="chatHeaderRight">
+        <span id="chatToggleList">명단</span>
+        <span id="chatClose">✕</span>
+      </div>
+    </div>
+    <div id="chatUserList"></div>
+    <div id="chatMessages"></div>
+    <div id="chatColorBar">
+      <div id="chatColorPreview">미리보기</div>
+      <div class="color-slider-row">
+        <span class="color-slider-label">R</span>
+        <input type="range" class="color-slider" id="sliderR" min="0" max="255" value="176">
+        <input type="text" class="color-slider-val" id="valR" value="176" maxlength="3">
+      </div>
+      <div class="color-slider-row">
+        <span class="color-slider-label">G</span>
+        <input type="range" class="color-slider" id="sliderG" min="0" max="255" value="127">
+        <input type="text" class="color-slider-val" id="valG" value="127" maxlength="3">
+      </div>
+      <div class="color-slider-row">
+        <span class="color-slider-label">B</span>
+        <input type="range" class="color-slider" id="sliderB" min="0" max="255" value="255">
+        <input type="text" class="color-slider-val" id="valB" value="255" maxlength="3">
+      </div>
+    </div>
+    <div id="chatImagePreview">
+      <img id="chatImagePreviewImg" src="" alt="">
+      <span id="chatImagePreviewName"></span>
+      <span id="chatImageClear">✕</span>
+    </div>
+    <div id="chatInputRow">
+      <div id="chatInputMain">
+        <input id="chatNameInput" type="text" placeholder="이름" maxlength="10" autocomplete="off" spellcheck="false">
+        <input id="chatTextInput" type="text" placeholder="메시지를 입력하세융!" maxlength="80" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="chatInputActions">
+        <button id="chatActColorBtn">이름 색상</button>
+        <input type="file" id="chatImageFile" accept="image/*" style="display:none">
+        <button id="chatActImgBtn">이미지 첨부</button>
+        <button id="chatActSendBtn">메세지 전송</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cloudOverlay">
+    <div id="cloudWrap">
+      <div id="cloudHeader">
+        <span id="cloudTitle">// CLOUD</span>
+        <span id="cloudClose">✕</span>
+      </div>
+      <div id="cloudStatus">불러오는 중...</div>
+      <div id="cloudList"></div>
+      <div id="cloudEmpty">파일이 없어융...</div>
+    </div>
+  </div>
+
   <script src="js/index.js"></script>
   <script src="js/commands.js"></script>
 </body>
