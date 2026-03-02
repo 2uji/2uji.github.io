@@ -131,7 +131,16 @@ zero.addEventListener('click', () => {
 pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click() })
 submitBtn.addEventListener('click', async () => {
   const hash = await sha256(pwdInput.value.trim())
-  if (hash === CORRECT_HASH) startCut()
+  if (hash === CORRECT_HASH) {
+    const favicon = document.querySelector("link[rel~='icon']")
+    if (favicon) favicon.href = 'assets/discord.png'
+    else {
+      const link = document.createElement('link')
+      link.rel = 'icon'; link.href = 'assets/discord.png'
+      document.head.appendChild(link)
+    }
+    startCut()
+  }
   else {
     errMsg.style.display = 'block'
     pwdInput.value = ''
@@ -160,13 +169,18 @@ function startCut() {
 
 function showYunyun() {
   setTimeout(() => yunyun.style.opacity = '1', 200)
-  yunyun.addEventListener('click', () => {
+  const proceed = () => {
     vid.muted = false; vid.preload = 'auto'
     vid.play().catch(() => { })
     cutScene.style.transition = 'opacity 1s ease'
     cutScene.style.opacity = '0'
     setTimeout(() => { cutScene.style.display = 'none'; launchMainScene() }, 1000)
-  }, { once: true })
+  }
+  yunyun.addEventListener('click', proceed, { once: true })
+  setTimeout(() => {
+    yunyun.removeEventListener('click', proceed)
+    proceed()
+  }, 2500)
 }
 
 let mainSceneActive = false
