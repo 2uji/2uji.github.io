@@ -127,7 +127,7 @@ p  { margin: .25em 0; line-height: 1.2; }
   position: fixed;
   inset: 0;
   z-index: 30;
-  display: none;
+  display: none !important;
   justify-content: center;
   align-items: center;
   background: rgba(0,0,0,0.45);
@@ -138,6 +138,7 @@ p  { margin: .25em 0; line-height: 1.2; }
   transition: opacity 0.25s ease;
 }
 #consoleOverlay.open {
+  display: flex !important;
   opacity: 1;
   pointer-events: all;
 }
@@ -240,11 +241,16 @@ p  { margin: .25em 0; line-height: 1.2; }
   inset: 0;
   z-index: 50;
   pointer-events: none;
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+#wallBreak.active {
+  visibility: visible;
+  opacity: 1;
 }
 
 #wallCharaWrap {
-  position: fixed;
+  position: fixed !important;
   bottom: -300px;
   right: 40px;
   display: flex;
@@ -252,6 +258,7 @@ p  { margin: .25em 0; line-height: 1.2; }
   align-items: center;
   z-index: 51;
   opacity: 0;
+  max-width: 220px;
 }
 #wallCharaWrap.slide-in {
   animation: charaSlideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
