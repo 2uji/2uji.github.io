@@ -1,6 +1,3 @@
-let isAdmin = false
-window.isAdmin = false
-
 const ADMIN_CMDS = ['discord', 'cloud']
 
 const COMMANDS = {
@@ -26,7 +23,7 @@ const COMMANDS = {
   },
   machu() {
     if (isAdmin) { speak('이미 어드민이에융!'); return }
-    isAdmin = true
+    isAdmin        = true
     window.isAdmin = true
 
     sliderR.value = 255; valR.value = 255
