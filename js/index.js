@@ -235,6 +235,7 @@ let speechTimer = null
 function speak(text, duration = 5000) {
   if (charaMode !== null) speakWall(text, duration)
   else speakConsole(text, duration)
+  if (idleInterval !== null) startIdle()
 }
 
 function speakConsole(text, duration) {
