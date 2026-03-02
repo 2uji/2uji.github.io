@@ -702,6 +702,13 @@ messagesRef.on('child_added', snapshot => {
   if (seenMsgs.has(snapshot.key)) return
   seenMsgs.add(snapshot.key)
 
+messagesRef.on('value', snapshot => {
+  if (snapshot.val() === null) {
+    chatMessages.innerHTML = ''
+    seenMsgs.clear()
+  }
+})
+
   const { name, text, color, imgUrl, isAdmin: msgIsAdmin } = snapshot.val()
 
   const div     = document.createElement('div')
