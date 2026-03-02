@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>404 Not Found</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap">
+</head>
+<body>
+  <div id="container">
+    <h1 id="zero">404</h1>
+    <p>Page Not Found</p>
+    <p id="errorCode">Error_Code yunyun</p>
+  </div>
+  <div id="passwordToggle">
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button id="submitPassword">Enter</button>
+    <div id="errorMsg">Fail</div>
+  </div>
+  <div id="cutScene">
+    <div class="cutWrapper">
+      <img id="yunyun" src="assets/yunyun.png" alt="">
+    </div>
+  </div>
+  <video id="video-bg" src="assets/yunyun.mp4" muted loop playsinline preload="none"></video>
+  <img src="assets/discord.png" id="discord" alt="discord">
+  <div id="consoleOverlay">
+    <div id="consoleWrap">
+      <div id="consoleChara">
+        <img id="charaImg" src="assets/chara.gif" alt="">
+        <div id="charaSpeech">
+          <span id="charaSpeechName">융융</span>
+          <span id="charaSpeechText"></span>
+        </div>
+      </div>
+      <div id="consoleInputRow">
+        <span id="consolePrompt">&gt;</span>
+        <input id="consoleInput" type="text" placeholder="명령어를 입력하세융!" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+
+  <div id="wallBreak">
+    <div id="wallCharaWrap">
+      <div id="wallSpeech">
+        <span id="wallSpeechName">융융</span>
+        <span id="wallSpeechText"></span>
+      </div>
+      <img id="wallChara" src="assets/help.gif" alt="">
+    </div>
+    <div id="wallPanel">
+      <div id="wallTitle">// COMMAND LIST</div>
+      <div id="wallList"></div>
+    </div>
+  </div>
+  <script src="js/index.js"></script>
+  <script src="js/commands.js"></script>
+</body>
+</html>
