@@ -177,11 +177,6 @@ function showYunyun() {
     setTimeout(() => { cutScene.style.display = 'none'; launchMainScene() }, 1000)
   }
   yunyun.addEventListener('click', proceed, { once: true })
-  setTimeout(() => {
-    yunyun.removeEventListener('click', proceed)
-    proceed()
-  }, 2500)
-}
 
 let mainSceneActive = false
 
@@ -1000,3 +995,4 @@ PanelManager.register('chat', chatBox, {
     return { left: 40, top: vh - ph - 40, right: 340, bottom: vh - 40 }
   }
 })
+
