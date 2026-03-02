@@ -15,6 +15,9 @@ const COMMANDS = {
   },
   close() {
     speak('잘가융!', 1200)
-    setTimeout(closeConsole, 1300)
+    setTimeout(() => {
+      if (wallActive) closeWallBreak()
+      setTimeout(closeConsole, 100)
+    }, 1300)
   }
 }
