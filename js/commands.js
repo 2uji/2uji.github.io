@@ -18,18 +18,18 @@ const COMMANDS = {
   close() {
     speak('잘가융!', 1200)
     setTimeout(() => {
-      if (wallActive) closeWallBreak()
+      closeAll()
       setTimeout(closeConsole, 100)
     }, 1300)
   },
   machu() {
     if (isAdmin) { speak('이미 어드민이에융!'); return }
-    isAdmin        = true
+    isAdmin = true
     window.isAdmin = true
 
     sliderR.value = 255; valR.value = 255
     sliderG.value = 215; valG.value = 215
-    sliderB.value = 0;   valB.value = 0
+    sliderB.value = 0; valB.value = 0
     updateColor()
 
     const wrap = document.getElementById('consoleWrap')
@@ -45,10 +45,10 @@ const COMMANDS = {
   },
   cloud() { openCloud() },
   clear() {
-  messagesRef.remove()
-  chatMessages.innerHTML = ''
-  speak('채팅 청소했어융!')
-},
+    messagesRef.remove()
+    chatMessages.innerHTML = ''
+    speak('채팅 청소했어융!')
+  },
 
 }
 
