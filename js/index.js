@@ -97,6 +97,18 @@ let vy = rand(0.4, 1.0) * randSign()
 let rot = rand(0, 360), rotSpeed = rand(-2, 2)
 let started = false
 
+const MAX_SPEED = 5.0
+let proximityFactor = 1.0
+
+document.addEventListener('mousemove', e => {
+  if (!started) return
+  const rect = discord.getBoundingClientRect()
+  const cx = rect.left + rect.width / 2
+  const cy = rect.top + rect.height / 2
+  const dist = Math.hypot(e.clientX - cx, e.clientY - cy)
+  proximityFactor = dist < 200 ? 0.3 + (dist / 200) * 0.7 : 1.0
+})
+
 function moveDiscord() {
   if (!started) {
     vw = window.innerWidth; vh = window.innerHeight
@@ -105,11 +117,20 @@ function moveDiscord() {
     started = true
   }
   vw = window.innerWidth; vh = window.innerHeight
-  x += vx; y += vy
+  x += vx * proximityFactor
+  y += vy * proximityFactor
   const w = discord.offsetWidth, h = discord.offsetHeight
-  if (x < 0 || x > vw - w) { vx *= -1; vx += rand(-0.3, 0.3) }
-  if (y < 0 || y > vh - h) { vy *= -1; vy += rand(-0.3, 0.3) }
-  rot += rotSpeed
+  if (x < 0 || x > vw - w) {
+    vx *= -1
+    vx += rand(-0.3, 0.3)
+    vx = Math.sign(vx) * Math.min(Math.abs(vx), MAX_SPEED)
+  }
+  if (y < 0 || y > vh - h) {
+    vy *= -1
+    vy += rand(-0.3, 0.3)
+    vy = Math.sign(vy) * Math.min(Math.abs(vy), MAX_SPEED)
+  }
+  rot += rotSpeed * proximityFactor  // 회전도 같이 감속
   discord.style.left      = `${x}px`
   discord.style.top       = `${y}px`
   discord.style.transform = `rotate(${rot}deg)`
@@ -333,7 +354,7 @@ function openChat() {
   chatBox.classList.add('open')
   subConsoles.set('chat', closeChat)
   updateChatUsers(['방문자1', '방문자2', '방문자3'])
-  addChatMessage('융융', '어서오세융! 채팅으로 대화해봐융!(아직 서버 연동이 되지 않았습니다.)')
+  addChatMessage('융융', '어서오세융! 채팅으로 대화해봐융!')
 }
 
 function closeChat() {
@@ -599,4 +620,3 @@ function triggerAccessDenied() {
     accessDeniedActive = false
   }, 7000)
 }
-
