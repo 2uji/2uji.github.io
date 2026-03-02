@@ -23,6 +23,16 @@ const COMMANDS = {
     }, 1300)
   },
   machu() {
+    if (charaMode === 'help') {
+      wallList.innerHTML = ''
+      HELP_LIST.forEach((item, i) => wallList.appendChild(_wallCmd(item, i)))
+      const div = document.createElement('div')
+      div.className = 'wall-cmd-divider'
+      div.style.animationDelay = `${0.35 + HELP_LIST.length * 0.08}s`
+      wallList.appendChild(div)
+      HELP_LIST_ADMIN.forEach((item, i) =>
+        wallList.appendChild(_wallCmd(item, HELP_LIST.length + 1 + i, true)))
+    }
     if (isAdmin) { speak('이미 어드민이에융!'); return }
     isAdmin = true
     window.isAdmin = true
