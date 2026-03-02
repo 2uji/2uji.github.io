@@ -175,8 +175,12 @@ let omokListeners = []
 let omokWinSpoken = false
 
 PanelManager.register('omok', omokBox, {
-  getAnchor: () => chatBox.classList.contains('open') ? chatBox.getBoundingClientRect() : null,
-  side: 'left',
+  getAnchor: () => ({
+    left: window.innerWidth - 400,
+    top: 40,
+    right: window.innerWidth,
+    bottom: 500
+  })
 })
 
 function openOmok() {
