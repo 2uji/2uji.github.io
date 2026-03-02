@@ -1,4 +1,4 @@
-const ADMIN_CMDS = ['discord', 'cloud']
+const ADMIN_CMDS = ['discord', 'cloud', 'clear']
 
 const COMMANDS = {
   help() { triggerWallBreak() },
@@ -42,7 +42,13 @@ const COMMANDS = {
 
     setTimeout(() => speak('주인님 어서오세융!'), 300)
   },
-  cloud() { openCloud() }
+  cloud() { openCloud() },
+  clear() {
+  messagesRef.remove()
+  chatMessages.innerHTML = ''
+  speak('채팅 청소했어융!')
+},
+
 }
 
 function handleCommand(cmd) {
