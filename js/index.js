@@ -264,8 +264,9 @@ let wallActive = false
 const HELP_LIST = [
   { cmd: 'help',  desc: '이 목록을 다시 보여줘융!' },
   { cmd: 'mute',  desc: '영상 소리 켜고 끄기에융!' },
-  { cmd: 'chat',  desc: '실시간 채팅창 열기에융!' },
+  { cmd: 'chat',  desc: '채팅창 열기에융!' },
   { cmd: 'close', desc: '콘솔 닫기에융!' },
+  { cmd: 'omok',  desc: '오목 게임이에융!' }
 ]
 
 const HELP_LIST_ADMIN = [
