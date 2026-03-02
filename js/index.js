@@ -333,7 +333,7 @@ function openChat() {
   chatBox.classList.add('open')
   subConsoles.set('chat', closeChat)
   updateChatUsers(['방문자1', '방문자2', '방문자3'])
-  addChatMessage('융융', '어서오세융! 채팅으로 대화해봐융!')
+  addChatMessage('융융', '어서오세융! 채팅으로 대화해봐융!(아직 서버 연동이 되지 않았습니다.)')
 }
 
 function closeChat() {
@@ -599,3 +599,4 @@ function triggerAccessDenied() {
     accessDeniedActive = false
   }, 7000)
 }
+
