@@ -171,7 +171,7 @@ function startCut() {
 function showYunyun() {
   setTimeout(() => yunyun.style.opacity = '1', 200)
   const proceed = () => {
-    vid.muted = false; vid.preload = 'auto'
+    vid.muted = true; vid.preload = 'auto'
     vid.play().catch(() => { })
     cutScene.style.transition = 'opacity 1s ease'
     cutScene.style.opacity = '0'
