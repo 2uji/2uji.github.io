@@ -30,6 +30,17 @@ const charaSpeechText = el('charaSpeechText')
 const consoleChara = el('consoleChara')
 const consoleWrap = el('consoleWrap')
 
+function _randomCharaGif() {
+  const gifs = [
+    'assets/help.gif',
+    'assets/chat.gif',
+    'assets/yunyun1.gif',
+    'assets/yunyun2.gif',
+    'assets/yunyun3.gif',
+  ]
+  return gifs[Math.floor(Math.random() * gifs.length)]
+}
+
 const PanelManager = (() => {
   const registry = new Map()
   const GAP = 10
@@ -40,9 +51,7 @@ const PanelManager = (() => {
 
   function _measure(panelEl) {
     const isHidden = getComputedStyle(panelEl).display === 'none'
-    if (!isHidden) {
-      return { w: panelEl.offsetWidth, h: panelEl.offsetHeight }
-    }
+    if (!isHidden) return { w: panelEl.offsetWidth, h: panelEl.offsetHeight }
     panelEl.style.visibility = 'hidden'
     panelEl.style.display = 'flex'
     const w = panelEl.offsetWidth
@@ -59,9 +68,7 @@ const PanelManager = (() => {
     const { w: pw, h: ph } = _measure(panelEl)
     const vw = window.innerWidth
     const vh = window.innerHeight
-
     let left = null, top = null
-
     if (opts.getAnchor) {
       const anchor = opts.getAnchor()
       if (anchor) {
@@ -72,13 +79,10 @@ const PanelManager = (() => {
         top = anchor.top
       }
     }
-
     if (left == null) left = (vw - pw) / 2
     if (top == null) top = (vh - ph) / 2
-
     left = Math.max(GAP, Math.min(left, vw - pw - GAP))
     top = Math.max(GAP, Math.min(top, vh - ph - GAP))
-
     panelEl.style.position = 'fixed'
     panelEl.style.left = left + 'px'
     panelEl.style.top = top + 'px'
@@ -107,9 +111,7 @@ const PanelManager = (() => {
   window.addEventListener('resize', () => {
     registry.forEach((_, id) => {
       const { el: panelEl } = registry.get(id)
-      if (panelEl.offsetParent !== null || panelEl.style.display !== 'none') {
-        clamp(id)
-      }
+      if (panelEl.offsetParent !== null || panelEl.style.display !== 'none') clamp(id)
     })
   })
 
@@ -141,8 +143,7 @@ submitBtn.addEventListener('click', async () => {
       document.head.appendChild(link)
     }
     startCut()
-  }
-  else {
+  } else {
     errMsg.style.display = 'block'
     pwdInput.value = ''
     pwdInput.focus()
@@ -154,7 +155,6 @@ function startCut() {
   container.style.transition = pwdBox.style.transition = 'opacity .6s'
   container.style.opacity = pwdBox.style.opacity = '0'
   document.body.style.background = '#0d0d0d'
-
   const fade = Object.assign(document.createElement('div'), {
     style: 'position:fixed;inset:0;background:#000;opacity:0;transition:opacity .8s;z-index:15;'
   })
@@ -320,58 +320,16 @@ const wallSpeechText = el('wallSpeechText')
   z-index: 55;
   opacity: 0;
   pointer-events: none;
-  max-width: 400px;
-  bottom: -700px;
-  right: 0;
-}
-
-/* ── help: 우측 하단 중앙부에서 올라와 콘솔 우측을 침범 ── */
-#wallCharaWrap.mode-help.slide-in {
-  animation: helpCharaIn 0.75s cubic-bezier(0.22,1,0.36,1) forwards;
-}
-#wallCharaWrap.mode-help.slide-out {
-  animation: helpCharaOut 0.45s ease-in forwards;
-}
-@keyframes helpCharaIn {
-  /* 시작: 콘솔 우측 아래 바깥 */
-  0%   { opacity:0; bottom:-700px; right:calc(50vw - 340px); top:auto; left:auto; }
-  25%  { opacity:1; }
-  /* 착지: 우측 하단 중앙부, 콘솔 우측 절반 침범 */
-  100% { opacity:1; bottom:-10px;  right:calc(50vw - 320px); top:auto; left:auto; }
-}
-@keyframes helpCharaOut {
-  0%   { opacity:1; bottom:-10px;  right:calc(50vw - 320px); top:auto; left:auto; }
-  100% { opacity:0; bottom:-700px; right:calc(50vw - 340px); top:auto; left:auto; }
-}
-
-/* ── chat: 좌측 위에서 내려와 콘솔을 좌측에서 침범 ── */
-#wallCharaWrap.mode-chat.slide-in {
-  animation: chatCharaIn 0.72s cubic-bezier(0.22,1,0.36,1) forwards;
-}
-#wallCharaWrap.mode-chat.slide-out {
-  animation: chatCharaOut 0.45s ease-in forwards;
-}
-@keyframes chatCharaIn {
-  /* 시작: 콘솔 좌측 위 바깥 */
-  0%   { opacity:0; top:-700px; left:calc(50vw - 420px); bottom:auto; right:auto; }
-  20%  { opacity:1; }
-  /* 착지: 콘솔 좌측 중앙을 침범하는 위치 (콘솔 너비 520px 기준 좌측 260px 지점) */
-  100% { opacity:1; top:calc(50vh - 300px); left:calc(50vw - 400px); bottom:auto; right:auto; }
-}
-@keyframes chatCharaOut {
-  0%   { opacity:1; top:calc(50vh - 300px); left:calc(50vw - 400px); bottom:auto; right:auto; }
-  100% { opacity:0; top:-700px; left:calc(50vw - 420px); bottom:auto; right:auto; }
+  max-width: 360px;
 }
 
 /* ── 캐릭터 이미지 공통 ── */
 #wallChara {
-  width: 360px;
+  width: 300px;
   height: auto;
   display: block;
   filter: drop-shadow(0 0 30px rgba(180,80,255,0.95));
 }
-
-/* chat 모드일 때는 chat.gif 사용 (JS에서 src 교체) */
 
 /* ── 말풍선 공통 ── */
 #wallSpeech {
@@ -381,7 +339,7 @@ const wallSpeechText = el('wallSpeechText')
   display: flex;
   gap: 8px;
   align-items: baseline;
-  max-width: 300px;
+  max-width: 260px;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -392,17 +350,15 @@ const wallSpeechText = el('wallSpeechText')
 }
 #wallSpeech.show { opacity:1; transform:translateY(0); }
 
-/* help: 말풍선 캐릭터 위 */
-#wallCharaWrap.mode-help #wallSpeech {
-  order: -1;
-  margin-bottom: 10px;
-  border-radius: 10px 10px 10px 4px;
-}
-/* chat: 말풍선 캐릭터 아래 */
-#wallCharaWrap.mode-chat #wallSpeech {
+#wallCharaWrap.pos-top #wallSpeech {
   order: 1;
   margin-top: 10px;
   border-radius: 4px 10px 10px 10px;
+}
+#wallCharaWrap.pos-bottom #wallSpeech {
+  order: -1;
+  margin-bottom: 10px;
+  border-radius: 10px 10px 10px 4px;
 }
 
 #wallSpeechName {
@@ -414,9 +370,7 @@ const wallSpeechText = el('wallSpeechText')
   font-family:'Inter',monospace; line-height:1.5;
 }
 
-/* ── 커맨드 패널: 캐릭터(우측)와 충분히 분리된 독립 위치 ──
-   캐릭터가 우측(right:-80px, 너비360px)에 있으므로
-   패널은 우측에서 360+80+20(gap)=460px 안쪽에 배치         */
+/* ── 커맨드 패널 ── */
 #wallPanel {
   position: fixed !important;
   left: -320px;
@@ -439,13 +393,12 @@ const wallSpeechText = el('wallSpeechText')
 #wallPanel.slide-out {
   animation: panelSlideOut 0.35s ease-in forwards;
 }
-/* 착지: 우측에서 460px 안쪽 = 캐릭터 바로 왼쪽 공간 */
 @keyframes panelSlideIn {
   0%   { opacity:0; left:-320px; }
-  100% { opacity:1; left:calc(100vw - 460px); }
+  100% { opacity:1; left:20px; }
 }
 @keyframes panelSlideOut {
-  0%   { opacity:1; left:calc(100vw - 460px); }
+  0%   { opacity:1; left:20px; }
   100% { opacity:0; left:-320px; }
 }
   `
@@ -477,6 +430,78 @@ function _charaTransition(newMode, enterFn) {
   }
 }
 
+function _placeCharaRandom() {
+  const charW = 300
+  const charH = 360
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+
+  // 콘솔 중앙 기준 금지 구역
+  const cx = vw / 2
+  const cy = vh / 2
+  const forbidX = [cx - 300, cx + 300]
+  const forbidY = [cy - 230, cy + 230]
+
+  const candidates = []
+
+  // 좌측
+  const leftX = forbidX[0] - charW - 20
+  if (leftX > 0) candidates.push({ x: leftX, y: Math.max(20, cy - charH / 2), fromX: -charW - 40, fromY: null, pos: 'top' })
+
+  // 우측
+  const rightX = forbidX[1] + 20
+  if (rightX + charW < vw) candidates.push({ x: rightX, y: Math.max(20, cy - charH / 2), fromX: vw + 40, fromY: null, pos: 'top' })
+
+  // 상단
+  const topY = forbidY[0] - charH - 20
+  if (topY > 0) candidates.push({ x: cx - charW / 2, y: topY, fromX: null, fromY: -charH - 40, pos: 'bottom' })
+
+  // 하단
+  const bottomY = forbidY[1] + 20
+  if (bottomY + charH < vh) candidates.push({ x: cx - charW / 2, y: bottomY, fromX: null, fromY: vh + 40, pos: 'top' })
+
+  if (!candidates.length) candidates.push({ x: vw - charW - 20, y: cy - charH / 2, fromX: vw + 40, fromY: null, pos: 'top' })
+
+  const pick = candidates[Math.floor(Math.random() * candidates.length)]
+
+  const fromX = pick.fromX !== null ? pick.fromX : pick.x
+  const fromY = pick.fromY !== null ? pick.fromY : pick.y
+
+  wallCharaWrap.classList.remove('pos-top', 'pos-bottom')
+  wallCharaWrap.classList.add(pick.pos === 'bottom' ? 'pos-bottom' : 'pos-top')
+
+  const oldStyle = document.getElementById('_charaAnimStyle')
+  if (oldStyle) oldStyle.remove()
+
+  const uid = Date.now()
+  const inName = `charaIn_${uid}`
+  const outName = `charaOut_${uid}`
+
+  const dynamicStyle = document.createElement('style')
+  dynamicStyle.id = '_charaAnimStyle'
+  dynamicStyle.textContent = `
+@keyframes ${inName} {
+  0%   { opacity:0; left:${fromX}px; top:${fromY}px; }
+  25%  { opacity:1; }
+  100% { opacity:1; left:${pick.x}px; top:${pick.y}px; }
+}
+@keyframes ${outName} {
+  0%   { opacity:1; left:${pick.x}px; top:${pick.y}px; }
+  100% { opacity:0; left:${fromX}px; top:${fromY}px; }
+}
+#wallCharaWrap.slide-in {
+  animation: ${inName} 0.75s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+#wallCharaWrap.slide-out {
+  animation: ${outName} 0.45s ease-in forwards;
+}
+  `
+  document.head.appendChild(dynamicStyle)
+
+  wallBreak.style.display = 'block'
+  requestAnimationFrame(() => wallCharaWrap.classList.add('slide-in'))
+}
+
 function _exitCurrentChara(cb) {
   wallSpeech.classList.remove('show')
 
@@ -495,7 +520,7 @@ function _exitCurrentChara(cb) {
   }
 
   setTimeout(() => {
-    wallCharaWrap.classList.remove('slide-in', 'slide-out', 'mode-help', 'mode-chat')
+    wallCharaWrap.classList.remove('slide-in', 'slide-out', 'mode-help', 'mode-chat', 'pos-top', 'pos-bottom')
     wallPanel.classList.remove('slide-in', 'slide-out')
     wallBreak.style.display = 'none'
     charaMode = null
@@ -528,8 +553,7 @@ function _enterHelp() {
   subConsoles.set('wall', closeWallBreak)
 
   _charaBlackout()
-
-  el('wallChara').src = 'assets/help.gif'
+  el('wallChara').src = _randomCharaGif()
 
   wallList.innerHTML = ''
   HELP_LIST.forEach((item, i) => wallList.appendChild(_wallCmd(item, i)))
@@ -542,13 +566,8 @@ function _enterHelp() {
       wallList.appendChild(_wallCmd(item, HELP_LIST.length + 1 + i, true)))
   }
 
-  wallBreak.style.display = 'block'
-  wallCharaWrap.classList.add('mode-help')
-  requestAnimationFrame(() => {
-    wallCharaWrap.classList.add('slide-in')
-    wallPanel.classList.add('slide-in')
-  })
-
+  _placeCharaRandom()
+  wallPanel.classList.add('slide-in')
   consoleInput.placeholder = '이해됐어융?'
   setTimeout(() => speak('화면 밖에서 알려줄게융!'), 600)
 }
@@ -576,15 +595,9 @@ function _enterChatChara() {
   wallActive = false
 
   _charaBlackout()
+  el('wallChara').src = _randomCharaGif()
 
-  el('wallChara').src = 'assets/chat.gif'
-
-  wallBreak.style.display = 'block'
-  wallCharaWrap.classList.add('mode-chat')
-  requestAnimationFrame(() => {
-    wallCharaWrap.classList.add('slide-in')
-  })
-
+  _placeCharaRandom()
   setTimeout(() => speak('채팅으로 대화해봐융!'), 560)
 }
 
@@ -777,7 +790,6 @@ document.addEventListener('mousemove', e => {
     chatBox.style.bottom = 'auto'
     chatBox.style.top = (rsTop - delta) + 'px'
   }
-
   if (dStarted) {
     const r = discord.getBoundingClientRect()
     const dist = Math.hypot(e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2)
@@ -878,7 +890,12 @@ async function sendChatMessage() {
     chatActSendBtn.textContent = '업로드 중...'
     chatActSendBtn.disabled = true
     try { imgUrl = await uploadToCloudinary(file) }
-    catch { speak('이미지 업로드 실패했어융...'); chatActSendBtn.textContent = '메세지 전송'; chatActSendBtn.disabled = false; return }
+    catch {
+      speak('이미지 업로드 실패했어융...')
+      chatActSendBtn.textContent = '메세지 전송'
+      chatActSendBtn.disabled = false
+      return
+    }
   }
 
   messagesRef.push({
