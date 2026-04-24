@@ -37,6 +37,18 @@
           <span id="charaSpeechText"></span>
         </div>
       </div>
+      <div id="yungpt">
+        <div id="yungpt-header">
+          <span id="yungpt-title">YUNGPT</span>
+          <span id="yungpt-status">ONLINE</span>
+          <span id="yungpt-close">✕</span>
+        </div>
+        <div id="yungpt-messages"></div>
+        <div id="yungpt-input-row">
+          <span id="yungpt-prompt">❯</span>
+          <input id="yungpt-input" type="text" placeholder="융융에게 물어봐융..." autocomplete="off" spellcheck="false">
+        </div>
+      </div>
       <div id="consoleInputRow">
         <span id="consolePrompt">&gt;</span>
         <input id="consoleInput" type="text" placeholder="명령어를 입력하세융!" autocomplete="off" spellcheck="false">
@@ -124,7 +136,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
-  <script src="js/panel-manager.js"></script>
   <script src="js/index.js"></script>
   <script src="js/omok.js"></script>
   <script src="js/commands.js"></script>
