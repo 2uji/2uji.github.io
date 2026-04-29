@@ -104,7 +104,6 @@ yungptInput.addEventListener('keydown', e => {
 
 yungptClose.addEventListener('click', closeYungpt)
 
-  // ── YUNGPT 리사이즈 ──────────────────────────────────────
   ; (function () {
     const MIN_W = 400
     const MIN_H = 300
@@ -136,7 +135,6 @@ yungptClose.addEventListener('click', closeYungpt)
         }
         document.body.style.userSelect = 'none'
       })
-      // consoleWrap이 로드된 후 추가되어야 하므로 DOMContentLoaded 후 실행
       consoleWrap.appendChild(handle)
     })
 
@@ -188,7 +186,6 @@ async function sendToYunyun(text) {
       return
     }
 
-    // ✅ 모든 텍스트 블록을 합쳐서 앞부분 잘림 방지
     const reply = data.content
       ?.filter(b => b.type === 'text' && b.text?.trim())
       .map(b => b.text.trim())
