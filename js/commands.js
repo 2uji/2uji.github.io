@@ -23,6 +23,13 @@ function openYungpt() {
   consoleWrap.style.height = '520px'
   consoleWrap.style.borderRadius = '20px'
 
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  consoleWrap.style.position = 'fixed'
+  consoleWrap.style.left = (vw / 2 - 340) + 'px'
+  consoleWrap.style.top = (vh / 2 - 260) + 'px'
+  consoleWrap.style.transform = 'none'
+
   yungpt.classList.add('open')
   yunyunChatActive = true
 
@@ -39,6 +46,10 @@ function closeYungpt() {
   _consoleChara.style.display = ''
   _consoleInputRow.style.display = ''
 
+  consoleWrap.style.position = ''
+  consoleWrap.style.left = ''
+  consoleWrap.style.top = ''
+  consoleWrap.style.transform = ''
   consoleWrap.style.width = ''
   consoleWrap.style.height = ''
   consoleWrap.style.borderRadius = ''
@@ -104,68 +115,122 @@ yungptInput.addEventListener('keydown', e => {
 
 yungptClose.addEventListener('click', closeYungpt)
 
-  ; (function () {
-    const MIN_W = 400
-    const MIN_H = 300
-    const MAX_W = () => Math.min(1200, window.innerWidth - 40)
-    const MAX_H = () => Math.min(900, window.innerHeight - 40)
+const yungptHeader = document.getElementById('yungpt-header')
+let _dragActive = false, _dragOffX = 0, _dragOffY = 0
 
-    let resizing = null
+yungptHeader.style.cursor = 'grab'
 
-    const EDGES = [
-      { id: 'e', style: 'right:-5px; top:8px; bottom:8px; width:10px; cursor:ew-resize;' },
-      { id: 's', style: 'bottom:-5px; left:8px; right:8px; height:10px; cursor:ns-resize;' },
-      { id: 'w', style: 'left:-5px; top:8px; bottom:8px; width:10px; cursor:ew-resize;' },
-      { id: 'n', style: 'top:-5px; left:8px; right:8px; height:10px; cursor:ns-resize;' },
-    ]
+yungptHeader.addEventListener('mousedown', e => {
+  if (!yunyunChatActive) return
+  _dragActive = true
+  const rect = consoleWrap.getBoundingClientRect()
+  _dragOffX = e.clientX - rect.left
+  _dragOffY = e.clientY - rect.top
+  consoleWrap.style.transition = 'none'
+  document.body.style.userSelect = 'none'
+  yungptHeader.style.cursor = 'grabbing'
+})
 
-    EDGES.forEach(({ id, style }) => {
-      const handle = document.createElement('div')
-      handle.dataset.resizeEdge = id
-      handle.style.cssText = `position:absolute; z-index:100; ${style}`
-      handle.addEventListener('mousedown', e => {
-        e.preventDefault()
-        const rect = consoleWrap.getBoundingClientRect()
-        resizing = {
-          edge: id,
-          startX: e.clientX,
-          startY: e.clientY,
-          startW: rect.width,
-          startH: rect.height,
-        }
-        document.body.style.userSelect = 'none'
-      })
-      consoleWrap.appendChild(handle)
+document.addEventListener('mousemove', e => {
+  if (_dragActive) {
+    const vw = window.innerWidth, vh = window.innerHeight
+    const w = consoleWrap.offsetWidth, h = consoleWrap.offsetHeight
+    let x = e.clientX - _dragOffX
+    let y = e.clientY - _dragOffY
+    x = Math.max(0, Math.min(x, vw - w))
+    y = Math.max(0, Math.min(y, vh - h))
+    consoleWrap.style.left = x + 'px'
+    consoleWrap.style.top = y + 'px'
+  }
+})
+
+document.addEventListener('mouseup', () => {
+  if (_dragActive) {
+    _dragActive = false
+    document.body.style.userSelect = ''
+    yungptHeader.style.cursor = 'grab'
+  }
+})
+
+;(function () {
+  const MIN_W = 400
+  const MIN_H = 300
+  const MAX_W = () => Math.min(1200, window.innerWidth - 40)
+  const MAX_H = () => Math.min(900, window.innerHeight - 40)
+
+  let resizing = null
+
+  // cursor.cur = 기본, cursor2.cur = pointer, cursor3.cur = ew-resize, cursor5.cur = ns-resize
+  const EDGES = [
+    { id: 'e', style: 'right:-5px; top:8px; bottom:8px; width:10px;', cur: "url('../assets/cursor3.cur'), ew-resize" },
+    { id: 's', style: 'bottom:-5px; left:8px; right:8px; height:10px;', cur: "url('../assets/cursor5.cur'), ns-resize" },
+    { id: 'w', style: 'left:-5px; top:8px; bottom:8px; width:10px;', cur: "url('../assets/cursor3.cur'), ew-resize" },
+    { id: 'n', style: 'top:-5px; left:8px; right:8px; height:10px;', cur: "url('../assets/cursor5.cur'), ns-resize" },
+  ]
+
+  EDGES.forEach(({ id, style, cur }) => {
+    const handle = document.createElement('div')
+    handle.dataset.resizeEdge = id
+    handle.style.cssText = `position:absolute; z-index:100; ${style} cursor:${cur};`
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault()
+      e.stopPropagation()
+      const rect = consoleWrap.getBoundingClientRect()
+      resizing = {
+        edge: id,
+        startX: e.clientX,
+        startY: e.clientY,
+        startW: rect.width,
+        startH: rect.height,
+        startL: rect.left,
+        startT: rect.top,
+      }
+      document.body.style.userSelect = 'none'
+      document.body.style.cursor = cur
     })
 
-    document.addEventListener('mousemove', e => {
-      if (!resizing || !yunyunChatActive) return
-      const { edge, startX, startY, startW, startH } = resizing
-      const dx = e.clientX - startX
-      const dy = e.clientY - startY
+    consoleWrap.appendChild(handle)
+  })
 
-      let newW = startW
-      let newH = startH
+  document.addEventListener('mousemove', e => {
+    if (!resizing || !yunyunChatActive) return
+    const { edge, startX, startY, startW, startH, startL, startT } = resizing
+    const dx = e.clientX - startX
+    const dy = e.clientY - startY
 
-      if (edge === 'e') newW = startW + dx
-      if (edge === 'w') newW = startW - dx
-      if (edge === 's') newH = startH + dy
-      if (edge === 'n') newH = startH - dy
+    let newW = startW, newH = startH
 
-      newW = Math.min(MAX_W(), Math.max(MIN_W, newW))
-      newH = Math.min(MAX_H(), Math.max(MIN_H, newH))
+    if (edge === 'e') newW = startW + dx
+    if (edge === 'w') {
+      newW = startW - dx
+      if (newW >= MIN_W && newW <= MAX_W()) {
+        consoleWrap.style.left = (startL + dx) + 'px'
+      }
+    }
+    if (edge === 's') newH = startH + dy
+    if (edge === 'n') {
+      newH = startH - dy
+      if (newH >= MIN_H && newH <= MAX_H()) {
+        consoleWrap.style.top = (startT + dy) + 'px'
+      }
+    }
 
-      consoleWrap.style.transition = 'none'
-      consoleWrap.style.width = newW + 'px'
-      consoleWrap.style.height = newH + 'px'
-    })
+    newW = Math.min(MAX_W(), Math.max(MIN_W, newW))
+    newH = Math.min(MAX_H(), Math.max(MIN_H, newH))
 
-    document.addEventListener('mouseup', () => {
-      if (!resizing) return
-      resizing = null
-      document.body.style.userSelect = ''
-    })
-  })()
+    consoleWrap.style.transition = 'none'
+    consoleWrap.style.width = newW + 'px'
+    consoleWrap.style.height = newH + 'px'
+  })
+
+  document.addEventListener('mouseup', () => {
+    if (!resizing) return
+    resizing = null
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+  })
+})()
 
 async function sendToYunyun(text) {
   const typing = _ygptTyping()
@@ -250,7 +315,7 @@ const COMMANDS = {
 
     sliderR.value = 255; valR.value = 255
     sliderG.value = 215; valG.value = 215
-    sliderB.value = 0; valB.value = 0
+    sliderB.value = 0;   valB.value = 0
     updateColor()
 
     const wrap = document.getElementById('consoleWrap')
