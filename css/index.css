@@ -1068,9 +1068,6 @@ input[type=range].color-slider::-webkit-slider-thumb {
   color: #ff6b6b;
 }
 
-/* ══════════════════════════════════════════════════════════
-   CLOUD OVERLAY
-══════════════════════════════════════════════════════════ */
 #cloudOverlay {
   position: fixed;
   inset: 0;
@@ -1463,4 +1460,14 @@ input[type=range].color-slider::-webkit-slider-thumb {
 
 #yungpt-exit:hover {
   color: #ff4466;
+}
+
+body.custom-cursor [data-resize-edge="e"],
+body.custom-cursor [data-resize-edge="w"] {
+  cursor: url('../assets/cursor3.cur'), ew-resize !important;
+}
+
+body.custom-cursor [data-resize-edge="n"],
+body.custom-cursor [data-resize-edge="s"] {
+  cursor: url('../assets/cursor5.cur'), ns-resize !important;
 }
