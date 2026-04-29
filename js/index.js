@@ -311,7 +311,6 @@ const wallSpeechText = el('wallSpeechText')
   ; (() => {
     const s = document.createElement('style')
     s.textContent = `
-/* ── 공통 래퍼 ── */
 #wallCharaWrap {
   position: fixed !important;
   display: flex;
@@ -323,7 +322,6 @@ const wallSpeechText = el('wallSpeechText')
   max-width: 360px;
 }
 
-/* ── 캐릭터 이미지 공통 ── */
 #wallChara {
   width: 300px;
   height: auto;
@@ -331,7 +329,6 @@ const wallSpeechText = el('wallSpeechText')
   filter: drop-shadow(0 0 30px rgba(180,80,255,0.95));
 }
 
-/* ── 말풍선 공통 ── */
 #wallSpeech {
   background: rgba(10,2,25,0.92);
   border: 1px solid rgba(180,120,255,0.55);
@@ -370,7 +367,6 @@ const wallSpeechText = el('wallSpeechText')
   font-family:'Inter',monospace; line-height:1.5;
 }
 
-/* ── 커맨드 패널 ── */
 #wallPanel {
   position: fixed !important;
   left: -320px;
@@ -436,7 +432,6 @@ function _placeCharaRandom() {
   const vw = window.innerWidth
   const vh = window.innerHeight
 
-  // 콘솔 중앙 기준 금지 구역
   const cx = vw / 2
   const cy = vh / 2
   const forbidX = [cx - 300, cx + 300]
@@ -444,19 +439,15 @@ function _placeCharaRandom() {
 
   const candidates = []
 
-  // 좌측
   const leftX = forbidX[0] - charW - 20
   if (leftX > 0) candidates.push({ x: leftX, y: Math.max(20, cy - charH / 2), fromX: -charW - 40, fromY: null, pos: 'top' })
 
-  // 우측
   const rightX = forbidX[1] + 20
   if (rightX + charW < vw) candidates.push({ x: rightX, y: Math.max(20, cy - charH / 2), fromX: vw + 40, fromY: null, pos: 'top' })
 
-  // 상단
   const topY = forbidY[0] - charH - 20
   if (topY > 0) candidates.push({ x: cx - charW / 2, y: topY, fromX: null, fromY: -charH - 40, pos: 'bottom' })
 
-  // 하단
   const bottomY = forbidY[1] + 20
   if (bottomY + charH < vh) candidates.push({ x: cx - charW / 2, y: bottomY, fromX: null, fromY: vh + 40, pos: 'top' })
 
